@@ -1,223 +1,308 @@
-import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
-import {
-  User,
-  Mail,
-  Calendar,
-  Grid,
-  Settings,
-  Image as ImageIcon,
-} from "lucide-react";
+import React, { useState } from "react";
+import { User, Camera } from "lucide-react";
 
-const UserProfile = () => {
-  const [userData, setUserData] = useState(null);
-  const [userImages, setUserImages] = useState([]);
-  const [loading, setLoading] = useState(true);
+const ProfilePage = () => {
+  const [hasUploadedProfilePic, setHasUploadedProfilePic] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [error, setError] = useState("");
-  const [view, setView] = useState("grid"); // 'grid' or 'list'
+  const [success, setSuccess] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
 
-  // Check authentication
-  const token = localStorage.getItem("token");
-  if (!token) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  useEffect(() => {
-    fetchUserData();
-    fetchUserImages();
-  }, []);
-
-  const fetchUserData = async () => {
-    try {
-      const response = await fetch("/api/user/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserData(data);
-      } else {
-        throw new Error("Failed to fetch user data");
-      }
-    } catch (err) {
-      setError("Failed to load user profile");
-    }
+  const handlePasswordChange = (event) => {
+    const { name, value } = event.target;
+    setPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Clear any existing error messages when user starts typing
+    setError("");
   };
 
-  const fetchUserImages = async () => {
-    try {
-      const response = await fetch("/api/user/images", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
 
-      if (response.ok) {
-        const data = await response.json();
-        setUserImages(data.images);
-      } else {
-        throw new Error("Failed to fetch images");
+    // Basic validation
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setError("New passwords do not match");
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
+    // Get token from localStorage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Authentication required");
+      return;
+    }
+
+    try {
+      setIsUpdatingPassword(true);
+      setError("");
+
+      const response = await fetch(
+        "https://your-backend-url.com/api/update-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            current_password: passwordData.currentPassword,
+            new_password: passwordData.newPassword,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update password");
       }
+
+      // Clear form and show success message
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setShowPasswordForm(false);
+      setSuccess("Password updated successfully!");
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccess("");
+      }, 3000);
     } catch (err) {
-      setError("Failed to load images");
+      setError(err.message || "Failed to update password");
     } finally {
-      setLoading(false);
+      setIsUpdatingPassword(false);
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const handleImageSelect = async (e) => {
+    if (hasUploadedProfilePic) {
+      setError("Profile picture can only be set once");
+      return;
+    }
+
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size should be less than 5MB");
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setError("");
+
+      const formData = new FormData();
+      formData.append("profile_picture", file);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
+      const response = await fetch(
+        "https://your-backend-url.com/api/upload-profile-picture",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      setImagePreview(URL.createObjectURL(file));
+      setHasUploadedProfilePic(true);
+      setSuccess("Profile picture updated successfully!");
+      localStorage.setItem("profilePicture", data.image_url);
+    } catch (err) {
+      setError(err.message || "Failed to upload image");
+      setImagePreview(null);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Profile Header */}
-      <div className="bg-gray-800 shadow-lg pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-          <div className="flex flex-col items-center">
-            {/* Profile Avatar */}
-            <div className="w-32 h-32 bg-gray-700 rounded-full flex items-center justify-center mb-4">
-              <User className="w-16 h-16 text-gray-400" />
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="max-w-md mx-auto bg-gray-800 rounded-lg shadow-xl p-6">
+        {/* Profile Picture Section */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-700">
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-full h-full p-4 text-gray-400" />
+              )}
+
+              {isUploading && (
+                <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-gray-400 border-t-blue-500 rounded-full animate-spin"></div>
+                </div>
+              )}
             </div>
 
-            {/* User Info */}
-            {userData && (
-              <div className="text-center">
-                <h1 className="text-2xl font-bold text-white mb-2">
-                  {userData.username}
-                </h1>
-                <div className="flex items-center justify-center text-gray-400 mb-4">
-                  <Mail className="w-4 h-4 mr-2" />
-                  <span>{userData.email}</span>
-                </div>
-                <div className="flex items-center justify-center text-gray-400">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  <span>Joined {formatDate(userData.joinedDate)}</span>
-                </div>
+            {!hasUploadedProfilePic && !isUploading && (
+              <label className="absolute bottom-0 right-0 bg-blue-600 rounded-full p-2 cursor-pointer hover:bg-blue-700">
+                <Camera className="w-5 h-5 text-white" />
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                />
+              </label>
+            )}
+
+            {hasUploadedProfilePic && (
+              <div className="absolute bottom-0 right-0 bg-gray-600 rounded-full p-2 cursor-not-allowed">
+                <Camera className="w-5 h-5 text-gray-400" />
               </div>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* View Toggle and Stats */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setView("grid")}
-              className={`p-2 rounded-md ${
-                view === "grid"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-700 text-gray-400"
-              }`}
-            >
-              <Grid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setView("list")}
-              className={`p-2 rounded-md ${
-                view === "list"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-700 text-gray-400"
-              }`}
-            >
-              <Settings className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="text-gray-400">
-            {userImages.length} {userImages.length === 1 ? "image" : "images"}{" "}
-            uploaded
-          </div>
+          {hasUploadedProfilePic && (
+            <p className="mt-2 text-sm text-gray-400">
+              Profile picture can only be set once
+            </p>
+          )}
         </div>
 
-        {/* Error State */}
-        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+        {/* Password Update Section */}
+        <div className="border-t border-gray-700 pt-6">
+          <button
+            onClick={() => {
+              setShowPasswordForm(!showPasswordForm);
+              setError("");
+              if (!showPasswordForm) {
+                setPasswordData({
+                  currentPassword: "",
+                  newPassword: "",
+                  confirmPassword: "",
+                });
+              }
+            }}
+            className="w-full px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600"
+          >
+            {showPasswordForm ? "Cancel Password Update" : "Update Password"}
+          </button>
 
-        {/* Loading State */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading your profile...</p>
-          </div>
-        ) : (
-          /* Image Gallery */
-          <>
-            {userImages.length === 0 ? (
-              <div className="text-center py-12 bg-gray-800 rounded-lg">
-                <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-300 mb-2">
-                  No images yet
-                </h3>
-                <p className="text-gray-400">
-                  Start by uploading your first image!
-                </p>
+          {showPasswordForm && (
+            <form onSubmit={handlePasswordUpdate} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={passwordData.currentPassword}
+                  onChange={handlePasswordChange}
+                  className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  required
+                  disabled={isUpdatingPassword}
+                />
               </div>
-            ) : (
-              <div
-                className={
-                  view === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-                    : "space-y-4"
-                }
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  required
+                  disabled={isUpdatingPassword}
+                  minLength={8}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={passwordData.confirmPassword}
+                  onChange={handlePasswordChange}
+                  className="mt-1 block w-full rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  required
+                  disabled={isUpdatingPassword}
+                  minLength={8}
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                disabled={isUpdatingPassword}
               >
-                {userImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className={`${
-                      view === "grid"
-                        ? "bg-gray-800 rounded-lg overflow-hidden"
-                        : "bg-gray-800 rounded-lg p-4 flex items-center space-x-4"
-                    }`}
-                  >
-                    <img
-                      src={image.url}
-                      alt={image.title}
-                      className={`${
-                        view === "grid"
-                          ? "w-full h-48 object-cover"
-                          : "w-24 h-24 object-cover rounded"
-                      }`}
-                    />
-                    <div className={`${view === "grid" ? "p-4" : "flex-1"}`}>
-                      <h3 className="text-white font-medium mb-2">
-                        {image.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm">
-                        Uploaded on {formatDate(image.uploadDate)}
-                      </p>
-                      {image.socialMediaLinks && (
-                        <div className="mt-2 space-y-1">
-                          {image.socialMediaLinks.map((link, idx) => (
-                            <a
-                              key={idx}
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block text-blue-400 hover:text-blue-300 text-sm"
-                            >
-                              {link.platform}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                {isUpdatingPassword ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-gray-400 border-t-white rounded-full animate-spin mr-2"></div>
+                    Updating...
                   </div>
-                ))}
-              </div>
-            )}
-          </>
+                ) : (
+                  "Update Password"
+                )}
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Alert Messages */}
+        {error && (
+          <div className="mt-4 p-3 bg-red-900/50 text-red-200 rounded-md border border-red-700">
+            {error}
+          </div>
         )}
-      </main>
+
+        {success && (
+          <div className="mt-4 p-3 bg-green-900/50 text-green-200 rounded-md border border-green-700">
+            {success}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default UserProfile;
+export default ProfilePage;

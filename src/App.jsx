@@ -5,24 +5,35 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
+import HomePage from "./components/HomePage";
 import AuthPage from "./components/AuthPage";
+import EventDetails from "./components/EventDetails";
 import Dashboard from "./components/Dashboard";
-import UserProfile from "./components/UserProfile";
-import EventsPage from "./components/EventDetails";
-// Simple auth check component
+import ProfilePage from "./components/UserProfile";
+
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/auth" replace />;
+  return token ? children : <Navigate to="/student-login" replace />;
+};
+
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
+  if (!token || !isAdmin) {
+    return <Navigate to="/admin-login" replace />;
+  }
+  return children;
 };
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Public route */}
-        <Route path="/auth" element={<Dashboard />} />
+        {/* Public routes */}
+        <Route path="/" element={<HomePage />} />
 
-        {/* Protected routes */}
+        {/* Protected student routes */}
         <Route
           path="/dashboard"
           element={
@@ -35,16 +46,47 @@ const App = () => {
           path="/profile"
           element={
             <PrivateRoute>
-              <UserProfile />
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <PrivateRoute>
+              <EventDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/user/login"
+          element={
+            <PrivateRoute>
+              <AuthPage />
             </PrivateRoute>
           }
         />
 
-        {/* Default redirect to auth page */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Admin routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <AdminRoute>
+              <EventDetails />
+            </AdminRoute>
+          }
+        />
 
-        {/* Catch all undefined routes */}
-        <Route path="*" element={<Navigate to="/auth" replace />} />
+        {/* Default redirect and catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

@@ -1,263 +1,257 @@
 import React, { useState, useEffect } from "react";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  ChevronRight,
-  Filter,
-} from "lucide-react";
+import { Search, CalendarDays, MapPin, X, Download } from "lucide-react";
 
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [filters, setFilters] = useState({
-    upcoming: true,
-    past: false,
-  });
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
 
-  useEffect(() => {
-    fetchEvents();
-  }, [filters]);
+  // Hardcoded events data
+  const hardcodedEvents = [
+    {
+      id: 1,
+      name: "Tech Conference 2024",
+      description:
+        "Join us for the biggest tech conference of the year featuring leading experts in AI, Web Development, and Cloud Computing.",
+      date: "2024-03-15T09:00:00Z",
+      location: "San Francisco Convention Center",
+    },
+    {
+      id: 2,
+      name: "Music Festival",
+      description:
+        "A three-day music festival featuring top artists from around the world. Experience amazing performances, food, and art.",
+      date: "2024-04-20T15:00:00Z",
+      location: "Central Park, New York",
+    },
+  ];
 
-  const fetchEvents = async () => {
+  // Handle image download
+  const handleDownloadImages = async (eventId) => {
+    setDownloadLoading(true);
+    setDownloadError("");
+
     try {
-      const token = localStorage.getItem("token");
+      // Get download link from backend
       const response = await fetch(
-        "/api/events?" +
-          new URLSearchParams({
-            upcoming: filters.upcoming,
-            past: filters.past,
-          }),
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `http://localhost:5000/api/events/${eventId}/images`
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data.events);
-      } else {
-        throw new Error("Failed to fetch events");
+      if (!response.ok) {
+        throw new Error("Failed to get download link");
       }
+
+      const data = await response.json();
+
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement("a");
+      link.href = data.downloadUrl;
+      link.download = `event-${eventId}-images.zip`; // Suggested filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (err) {
-      setError("Failed to load events");
+      setDownloadError("Failed to download images. Please try again.");
     } finally {
-      setLoading(false);
+      setDownloadLoading(false);
     }
   };
 
+  // Local search function for hardcoded data
+  const searchLocalEvents = (query) => {
+    if (!query.trim()) {
+      setEvents(hardcodedEvents);
+      return;
+    }
+
+    const filteredEvents = hardcodedEvents.filter(
+      (event) =>
+        event.name.toLowerCase().includes(query.toLowerCase()) ||
+        event.description.toLowerCase().includes(query.toLowerCase()) ||
+        event.location.toLowerCase().includes(query.toLowerCase())
+    );
+
+    setEvents(filteredEvents);
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    searchLocalEvents(query);
+  };
+
+  useEffect(() => {
+    setEvents(hardcodedEvents);
+    setLoading(false);
+  }, []);
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
-      weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
-  };
-
-  const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
     });
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Header */}
-      <div className="bg-gray-800 shadow-lg pb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <h1 className="text-3xl font-bold text-white">Events</h1>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters */}
-        <div className="bg-gray-800 rounded-lg p-4 mb-6">
-          <div className="flex items-center space-x-4">
-            <Filter className="text-gray-400" />
-            <div className="flex space-x-4">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={filters.upcoming}
-                  onChange={(e) =>
-                    setFilters({ ...filters, upcoming: e.target.checked })
-                  }
-                  className="form-checkbox text-blue-600 bg-gray-700 border-gray-600 rounded"
-                />
-                <span className="text-white">Upcoming Events</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={filters.past}
-                  onChange={(e) =>
-                    setFilters({ ...filters, past: e.target.checked })
-                  }
-                  className="form-checkbox text-blue-600 bg-gray-700 border-gray-600 rounded"
-                />
-                <span className="text-white">Past Events</span>
-              </label>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-100">Events</h1>
+          <p className="text-gray-400 mt-2">
+            Browse and search upcoming events
+          </p>
         </div>
 
-        {/* Error State */}
-        {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+        {/* Search Bar */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg 
+                     text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 
+                     focus:ring-blue-500 focus:border-transparent"
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        </div>
 
         {/* Loading State */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading events...</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Events List */}
-            <div className="lg:col-span-1 space-y-4">
-              {events.length === 0 ? (
-                <div className="bg-gray-800 rounded-lg p-6 text-center">
-                  <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-300">No events found</p>
-                </div>
-              ) : (
-                events.map((event) => (
-                  <div
-                    key={event.id}
-                    onClick={() => setSelectedEvent(event)}
-                    className={`bg-gray-800 rounded-lg p-4 cursor-pointer transition-all ${
-                      selectedEvent?.id === event.id
-                        ? "ring-2 ring-blue-500"
-                        : "hover:bg-gray-750"
-                    }`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-medium text-white mb-2">
-                          {event.title}
-                        </h3>
-                        <div className="flex items-center text-gray-400 text-sm mb-1">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          {formatDate(event.startDate)}
-                        </div>
-                        <div className="flex items-center text-gray-400 text-sm">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          {event.location}
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400" />
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Event Details */}
-            <div className="lg:col-span-2">
-              {selectedEvent ? (
-                <div className="bg-gray-800 rounded-lg p-6">
-                  <h2 className="text-2xl font-bold text-white mb-4">
-                    {selectedEvent.title}
-                  </h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center text-gray-300">
-                        <Calendar className="w-5 h-5 mr-3" />
-                        <div>
-                          <p className="font-medium">Date</p>
-                          <p className="text-gray-400">
-                            {formatDate(selectedEvent.startDate)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center text-gray-300">
-                        <Clock className="w-5 h-5 mr-3" />
-                        <div>
-                          <p className="font-medium">Time</p>
-                          <p className="text-gray-400">
-                            {formatTime(selectedEvent.startDate)} -
-                            {formatTime(selectedEvent.endDate)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center text-gray-300">
-                        <MapPin className="w-5 h-5 mr-3" />
-                        <div>
-                          <p className="font-medium">Location</p>
-                          <p className="text-gray-400">
-                            {selectedEvent.location}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center text-gray-300">
-                        <Users className="w-5 h-5 mr-3" />
-                        <div>
-                          <p className="font-medium">Capacity</p>
-                          <p className="text-gray-400">
-                            {selectedEvent.currentAttendees} /{" "}
-                            {selectedEvent.maxCapacity} attendees
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-medium text-white mb-2">
-                        Description
-                      </h3>
-                      <p className="text-gray-400 whitespace-pre-line">
-                        {selectedEvent.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Additional Event Details */}
-                  {selectedEvent.additionalInfo && (
-                    <div className="border-t border-gray-700 pt-6 mt-6">
-                      <h3 className="text-lg font-medium text-white mb-2">
-                        Additional Information
-                      </h3>
-                      <div className="text-gray-400">
-                        {selectedEvent.additionalInfo}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Event Actions */}
-                  <div className="border-t border-gray-700 pt-6 mt-6">
-                    <button
-                      className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-                      onClick={() => {
-                        /* Handle event registration */
-                      }}
-                    >
-                      Register for Event
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-gray-800 rounded-lg p-6 text-center">
-                  <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-300">
-                    Select an event to view details
-                  </p>
-                </div>
-              )}
-            </div>
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="w-8 h-8 border-4 border-gray-400 border-t-blue-500 rounded-full animate-spin"></div>
           </div>
         )}
-      </main>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-900/50 text-red-200 p-4 rounded-lg border border-red-700">
+            {error}
+          </div>
+        )}
+
+        {/* Events Grid */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.length === 0 ? (
+              <div className="col-span-full text-center text-gray-400 py-12">
+                No events found
+              </div>
+            ) : (
+              events.map((event) => (
+                <div
+                  key={event.id}
+                  className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden 
+                           hover:border-gray-600 transition-colors duration-200"
+                >
+                  <div className="p-4">
+                    <h3 className="text-xl font-semibold text-gray-100">
+                      {event.name}
+                    </h3>
+                    <p className="mt-2 text-gray-300 line-clamp-2">
+                      {event.description}
+                    </p>
+
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center text-gray-400">
+                        <CalendarDays className="w-4 h-4 mr-2" />
+                        <span className="text-sm">
+                          {formatDate(event.date)}
+                        </span>
+                      </div>
+                      <div className="flex items-center text-gray-400">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        <span className="text-sm">{event.location}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex gap-2">
+                      <button
+                        onClick={() => setSelectedEvent(event)}
+                        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md 
+                                 hover:bg-blue-700 transition-colors duration-200
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                                 focus:ring-offset-gray-800"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Event Details Modal */}
+      {selectedEvent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-lg max-w-2xl w-full p-6 relative">
+            <button
+              onClick={() => {
+                setSelectedEvent(null);
+                setDownloadError("");
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-300"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <h2 className="text-2xl font-bold text-gray-100 mb-4">
+              {selectedEvent.name}
+            </h2>
+            <p className="text-gray-300 mb-4">{selectedEvent.description}</p>
+
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center text-gray-400">
+                <CalendarDays className="w-4 h-4 mr-2" />
+                <span>{formatDate(selectedEvent.date)}</span>
+              </div>
+              <div className="flex items-center text-gray-400">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span>{selectedEvent.location}</span>
+              </div>
+            </div>
+
+            {downloadError && (
+              <div className="mb-4 p-3 bg-red-900/50 text-red-200 rounded-md border border-red-700">
+                {downloadError}
+              </div>
+            )}
+
+            <button
+              onClick={() => handleDownloadImages(selectedEvent.id)}
+              disabled={downloadLoading}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md 
+                       hover:bg-blue-700 transition-colors duration-200
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                       focus:ring-offset-gray-800 disabled:bg-gray-600 disabled:cursor-not-allowed
+                       flex items-center justify-center gap-2"
+            >
+              {downloadLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-gray-400 border-t-white rounded-full animate-spin"></div>
+                  Fetching Images...
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5" />
+                  Get Images
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

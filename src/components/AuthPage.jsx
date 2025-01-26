@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [publicKey, setPublicKey] = useState(null);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -16,6 +17,58 @@ const AuthPage = () => {
   if (token) {
     return <Navigate to="/dashboard" replace />;
   }
+
+  // Fetch public key from backend when component mounts
+  useEffect(() => {
+    const fetchPublicKey = async () => {
+      try {
+        const response = await fetch("/api/public-key");
+        const data = await response.json();
+
+        // Convert base64 public key to CryptoKey object
+        const binaryKey = Uint8Array.from(atob(data.publicKey), (c) =>
+          c.charCodeAt(0)
+        );
+        const importedKey = await window.crypto.subtle.importKey(
+          "spki",
+          binaryKey,
+          {
+            name: "RSA-OAEP",
+            hash: "SHA-256",
+          },
+          true,
+          ["encrypt"]
+        );
+        setPublicKey(importedKey);
+      } catch (err) {
+        setError("Failed to fetch encryption key. Please try again later.");
+      }
+    };
+
+    fetchPublicKey();
+  }, []);
+
+  const encryptPassword = async (password) => {
+    if (!publicKey) {
+      throw new Error("Encryption key not available");
+    }
+
+    // Convert password string to ArrayBuffer
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+
+    // Encrypt the password
+    const encryptedPassword = await window.crypto.subtle.encrypt(
+      {
+        name: "RSA-OAEP",
+      },
+      publicKey,
+      data
+    );
+
+    // Convert encrypted password to base64 string for transmission
+    return btoa(String.fromCharCode(...new Uint8Array(encryptedPassword)));
+  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -34,13 +87,20 @@ const AuthPage = () => {
     }
 
     try {
+      // Encrypt password before sending to backend
+      const encryptedPassword = await encryptPassword(formData.password);
+
       const endpoint = isLogin ? "/api/login" : "/api/register";
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          password: encryptedPassword,
+          confirmPassword: undefined, // Remove confirmPassword from payload
+        }),
       });
 
       const data = await response.json();
@@ -53,9 +113,11 @@ const AuthPage = () => {
       }
     } catch (err) {
       setError("Server error. Please try again later.");
+      console.error(err);
     }
   };
 
+  // Rest of the component remains the same
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-gray-800 p-8 rounded-lg shadow-lg">
@@ -84,7 +146,7 @@ const AuthPage = () => {
               </div>
             )}
             <div>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="email" className="sr-only ">
                 Email address
               </label>
               <input
