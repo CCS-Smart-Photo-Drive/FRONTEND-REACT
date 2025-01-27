@@ -50,20 +50,17 @@ const ProfilePage = () => {
       setIsUpdatingPassword(true);
       setError("");
 
-      const response = await fetch(
-        "https://your-backend-url.com/api/update-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            current_password: passwordData.currentPassword,
-            new_password: passwordData.newPassword,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:5000/my_dashboard", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          current_password: passwordData.currentPassword,
+          new_password: passwordData.newPassword,
+        }),
+      });
 
       const data = await response.json();
 
@@ -123,9 +120,10 @@ const ProfilePage = () => {
       if (!token) {
         throw new Error("Authentication required");
       }
-
+      const event_name = ""; //left to be updated
       const response = await fetch(
-        "https://your-backend-url.com/api/upload-profile-picture",
+        `http://localhost:5000/get_photos/${event_name}`, //dynamic routing -->event name should be passed here
+
         {
           method: "POST",
           headers: {

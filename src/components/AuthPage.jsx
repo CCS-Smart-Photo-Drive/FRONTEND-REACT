@@ -22,7 +22,7 @@ const AuthPage = () => {
   useEffect(() => {
     const fetchPublicKey = async () => {
       try {
-        const response = await fetch("/api/public-key");
+        const response = await fetch("http://localhost:5000/api/public-key");
         const data = await response.json();
 
         // Convert base64 public key to CryptoKey object
@@ -90,7 +90,9 @@ const AuthPage = () => {
       // Encrypt password before sending to backend
       const encryptedPassword = await encryptPassword(formData.password);
 
-      const endpoint = isLogin ? "/api/login" : "/api/register";
+      const endpoint = isLogin
+        ? "http://localhost:5000/login_user"
+        : "http://localhost:5000/register_user";
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {

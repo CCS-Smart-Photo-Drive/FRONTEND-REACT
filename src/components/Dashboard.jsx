@@ -14,7 +14,7 @@ const Dashboard = () => {
 
   const fetchUserImages = async () => {
     try {
-      const response = await fetch("/api/images", {
+      const response = await fetch("http://localhost:5000/api/images", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -50,7 +50,7 @@ const Dashboard = () => {
     formData.append("image", selectedFile);
 
     try {
-      const response = await fetch("/api/upload", {
+      const response = await fetch("http://localhost:5000/api/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

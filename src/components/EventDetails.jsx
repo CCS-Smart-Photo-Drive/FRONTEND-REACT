@@ -38,7 +38,7 @@ const EventsPage = () => {
     try {
       // Get download link from backend
       const response = await fetch(
-        `http://localhost:5000/api/events/${eventId}/images`
+        `http://localhost:5000/all_events/${eventId}` // --->> event name is required to be passed here
       );
 
       if (!response.ok) {
@@ -244,7 +244,7 @@ const EventsPage = () => {
                 </>
               ) : (
                 <>
-                  <Download className="w-5 h-5" />
+                  <Download className="w-5 h-5" onClick={handleGetImage} />
                   Get Images
                 </>
               )}

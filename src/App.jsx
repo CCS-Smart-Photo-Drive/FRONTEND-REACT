@@ -31,7 +31,7 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<EventDetails />} />
 
         {/* Protected student routes */}
         <Route
