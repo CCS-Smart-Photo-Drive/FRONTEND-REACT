@@ -10,7 +10,6 @@ import HomePage from "./components/HomePage";
 import UserAuthPage from "./components/UserAuthPage";
 import AdminAuthPage from "./components/AdminAuthPage";
 import EventDetails from "./components/EventDetails";
-import Dashboard from "./components/Dashboard";
 import ProfilePage from "./components/UserProfile";
 import New_Event_Page from "./components/New-Event Page/New_Event_Page";
 import About_Page from "./components/About-Us Page/About_Page";
@@ -54,6 +53,14 @@ const App = () => {
           }
         />
         <Route
+          path="/new-event"
+          element={
+            // <PrivateRoute>
+            <New_Event_Page />
+            /* </PrivateRoute> */
+          }
+        />
+        <Route
           path="/events"
           element={
             // <PrivateRoute>
@@ -67,16 +74,6 @@ const App = () => {
             // <PrivateRoute>
             <UserAuthPage />
             // </PrivateRoute>
-          }
-        />
-
-        {/* Admin routes */}
-        <Route
-          path="/dashboard"
-          element={
-            // <AdminRoute>
-            <Dashboard />
-            /* </AdminRoute> */
           }
         />
         <Route

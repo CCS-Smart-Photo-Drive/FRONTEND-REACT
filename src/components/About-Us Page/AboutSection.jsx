@@ -1,17 +1,13 @@
-import React from 'react'
+import React from "react";
 export default function AboutSection() {
-    return (
-      <section className="min-h-screen flex items-center justify-center">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-6xl font-bold text-white mb-8 custom-about-us">
-            ABOUT US
-          </h1>
-          <p className="text-gray-300 max-w-3xl mx-auto">
-            we are ccs niggas
-          </p>
-        </div>
-      </section>
-    );
-  }
-  
-  
+  return (
+    <section className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="container mx-auto px-4 text-center">
+        <h1 className="text-6xl font-bold text-white mb-8 custom-about-us">
+          ABOUT US
+        </h1>
+        <p className="text-gray-300 max-w-3xl mx-auto">we are ccs niggas</p>
+      </div>
+    </section>
+  );
+}

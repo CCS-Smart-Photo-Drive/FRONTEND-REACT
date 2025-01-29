@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React from "react";
 import { useState, useEffect } from "react";
 
 export default function ExecutiveBoard() {
@@ -7,74 +7,74 @@ export default function ExecutiveBoard() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const Data =  [
+    const Data = [
       {
-        "name": "Member 1",
-        "role": "Role",
-        "image": "/TANMAY_MANN.png"
+        name: "Member 1",
+        role: "Role",
+        image: "/TANMAY_MANN.png",
       },
       {
-        "name": "Member 2",
-        "role": "Role",
-        "image": "/images.jpg"
+        name: "Member 2",
+        role: "Role",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 3",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 3",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 4",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 4",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 5",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 5",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 6",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 6",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 7",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 7",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 8",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 8",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 9",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 9",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 10",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 10",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 11",
-        "role": "MEMBER",
-        "image": "/images.jpg"
+        name: "Member 11",
+        role: "MEMBER",
+        image: "/images.jpg",
       },
       {
-        "name": "Member 12",
-        "role": "MEMBER",
-        "image": "/images.jpg"
-      }
-  ];
+        name: "Member 12",
+        role: "MEMBER",
+        image: "/images.jpg",
+      },
+    ];
     setExecutives(Data);
   }, []);
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      (prevIndex - 1 + executives.length) % executives.length
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + executives.length) % executives.length
     );
   };
 
@@ -83,7 +83,7 @@ export default function ExecutiveBoard() {
   };
 
   return (
-    <section className="py-20 relative z-10">
+    <section className="py-20 relative z-10 bg-gray-900">
       <div className="container mx-auto px-4">
         <h2 className="text-5xl font-bold text-white text-center mb-16 z-20 relative">
           EXECUTIVE BOARD
@@ -174,4 +174,3 @@ export default function ExecutiveBoard() {
     </section>
   );
 }
-

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, CalendarDays, MapPin, X, Download } from "lucide-react";
-
+import NavbarUser from "./NavbarUser";
 const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,6 +101,7 @@ const EventsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 py-8 px-4">
+      <NavbarUser />
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div>

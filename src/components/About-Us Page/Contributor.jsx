@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react";
 
 export default function Contributor() {
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const videoRefs = useRef([])
-  const creatorRefs = useRef([])
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const videoRefs = useRef([]);
+  const creatorRefs = useRef([]);
 
   const creators = [
     {
@@ -43,92 +43,103 @@ export default function Contributor() {
       image: "/F.jpg",
       description: "blah blah",
     },
-  ]
+  ];
 
   useEffect(() => {
-    showVideo(currentVideoIndex)
-  }, [currentVideoIndex])
+    showVideo(currentVideoIndex);
+  }, [currentVideoIndex]);
 
   useEffect(() => {
     const handleScroll = (e) => {
-      e.preventDefault()
-      const href = e.currentTarget.getAttribute("href")
+      e.preventDefault();
+      const href = e.currentTarget.getAttribute("href");
       document.querySelector(href).scrollIntoView({
         behavior: "smooth",
-      })
-    }
+      });
+    };
 
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener("click", handleScroll)
-    })
+      anchor.addEventListener("click", handleScroll);
+    });
 
     return () => {
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.removeEventListener("click", handleScroll)
-      })
-    }
-  }, [])
+        anchor.removeEventListener("click", handleScroll);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if ("IntersectionObserver" in window) {
       const imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const image = entry.target
-            image.src = image.dataset.src
-            image.classList.remove("lazy")
-            observer.unobserve(image)
+            const image = entry.target;
+            image.src = image.dataset.src;
+            image.classList.remove("lazy");
+            observer.unobserve(image);
           }
-        })
-      })
+        });
+      });
 
-      document.querySelectorAll("img.lazy").forEach((img) => imageObserver.observe(img))
+      document
+        .querySelectorAll("img.lazy")
+        .forEach((img) => imageObserver.observe(img));
     }
-  }, [])
+  }, []);
 
   const showVideo = (index) => {
     videoRefs.current.forEach((video, i) => {
       if (i === index) {
-        video.classList.add("active")
+        video.classList.add("active");
       } else {
-        video.classList.remove("active")
+        video.classList.remove("active");
       }
-    })
-  }
+    });
+  };
 
   const nextVideo = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videoRefs.current.length)
-  }
+    setCurrentVideoIndex(
+      (prevIndex) => (prevIndex + 1) % videoRefs.current.length
+    );
+  };
 
   const prevVideo = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex - 1 + videoRefs.current.length) % videoRefs.current.length)
-  }
+    setCurrentVideoIndex(
+      (prevIndex) =>
+        (prevIndex - 1 + videoRefs.current.length) % videoRefs.current.length
+    );
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   const handleCreatorHover = (index, isEnter) => {
     creatorRefs.current.forEach((creator, i) => {
       if (i !== index) {
-        creator.style.opacity = isEnter ? "0.5" : "1"
-        creator.style.transform = isEnter ? "scale(0.95)" : "scale(1)"
+        creator.style.opacity = isEnter ? "0.5" : "1";
+        creator.style.transform = isEnter ? "scale(0.95)" : "scale(1)";
       }
-    })
-  }
+    });
+  };
 
   return (
-    <section className="py-20 relative z-10">
+    <section className="py-20 relative z-10 bg-gray-900">
       <div className="container mx-auto px-4">
-        <h2 className="text-5xl font-bold text-white text-center z-20 relative mb-8">CONTRIBUTORS</h2>
+        <h2 className="text-5xl font-bold text-white text-center z-20 relative mb-8">
+          CONTRIBUTORS
+        </h2>
         <div className="rounded-lg shadow-2xl p-8">
-          <h1 className="text-3xl font-bold text-white text-center mb-8">Meet Our Creators</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <h1 className="text-3xl font-bold text-white text-center mb-8">
+            Meet Our Creators
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ">
             {creators.map((creator, index) => (
               <div
                 key={creator.id}
                 ref={(el) => (creatorRefs.current[index] = el)}
-                className="relative overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105 group"
+                className="relative overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105 group bg-gray-800"
                 onMouseEnter={() => handleCreatorHover(index, true)}
                 onMouseLeave={() => handleCreatorHover(index, false)}
               >
@@ -147,11 +158,8 @@ export default function Contributor() {
               </div>
             ))}
           </div>
-          
         </div>
       </div>
-      
     </section>
-  )
+  );
 }
-

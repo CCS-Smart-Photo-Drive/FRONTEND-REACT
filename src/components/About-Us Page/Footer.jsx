@@ -1,5 +1,5 @@
-"use client"
-import React from 'react'
+"use client";
+import React from "react";
 import { useRef, useEffect, useState } from "react";
 import membersData from "./cores.json";
 
@@ -27,7 +27,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="py-12">
+    <footer className="py-12 bg-gray-900">
       <div className="container mx-auto px-4 text-center">
         <p className="text-white text-xl mb-8">
           MADE WITH <span className="text-red-500">❤️</span> BY CCS
@@ -44,15 +44,20 @@ export default function Footer() {
             marginRight: "-1rem",
           }}
         >
-          {members.length > 0 ? members.map((member, index) => (
-            <div key={index} className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden">
-              <img
-                src={member.image}
-                alt={`Member ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )) : (
+          {members.length > 0 ? (
+            members.map((member, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden"
+              >
+                <img
+                  src={member.image}
+                  alt={`Member ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))
+          ) : (
             <p className="text-white">Loading members...</p>
           )}
         </div>
@@ -60,4 +65,3 @@ export default function Footer() {
     </footer>
   );
 }
-
