@@ -11,6 +11,8 @@ import AuthPage from "./components/AuthPage";
 import EventDetails from "./components/EventDetails";
 import Dashboard from "./components/Dashboard";
 import ProfilePage from "./components/UserProfile";
+import New_Event_Page from "./components/New-Event Page/New_Event_Page";
+import About_Page from "./components/About-Us Page/About_Page";
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -31,14 +33,21 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<EventDetails />} />
-
+        <Route path="/" element={<New_Event_Page />} />
         {/* Protected student routes */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/events"
+          element={
+            <PrivateRoute>
+              <New_Event_Page />
             </PrivateRoute>
           }
         />
@@ -77,10 +86,10 @@ const App = () => {
           }
         />
         <Route
-          path="/events"
+          path="/about-us"
           element={
             <AdminRoute>
-              <EventDetails />
+              <About_Page />
             </AdminRoute>
           }
         />
