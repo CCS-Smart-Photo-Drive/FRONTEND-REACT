@@ -38,7 +38,7 @@ const EventsPage = () => {
     try {
       // Get download link from backend
       const response = await fetch(
-        `http://localhost:5000/all_events/${eventId}` // --->> event name is required to be passed here
+        `http://localhost:5000/all_events/${eventId}` // --->> event name is required to be passed here// send user email also for using AI model as json response
       );
 
       if (!response.ok) {

@@ -1,162 +1,169 @@
 import React from "react";
-import { UserCircle2, MenuIcon, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { Camera, Image, Globe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+const SmartPhotoDriveHome = () => {
+  const navigate = useNavigate();
 
-const HomePage = () => {
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const handleAdminLogin = () => {
+    navigate("/user/login");
+  };
 
+  const handleUserLogin = () => {
+    navigate("/user/login");
+  };
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Navigation Bar */}
-      <nav className="bg-gray-800 border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-950 text-white">
+      {/* Navigation */}
+
+      <nav className="fixed top-0 w-full bg-black bg-opacity-80 shadow-xl z-50">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo and Brand */}
-            <div className="flex items-center">
-              <span className="text-xl font-bold text-white">EventHub</span>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-indigo-500"
+            >
+              SmartPhotoDrive
+            </motion.div>
+
+            <div className="hidden md:flex space-x-8">
+              {["About Us"].map((item, i) => (
+                <motion.a
+                  key={i}
+                  whileHover={{ scale: 1.1 }}
+                  href={`/about-us`}
+                  className="text-gray-300 hover:text-white transition duration-200 font-medium"
+                >
+                  {item}
+                </motion.a>
+              ))}
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4">
-              <button
-                onClick={() => (window.location.href = "/admin-login")}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+            <div className="flex space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleUserLogin}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300"
               >
-                <UserCircle2 className="w-5 h-5 mr-2" />
+                User Login
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleAdminLogin}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-indigo-700 transition duration-300"
+              >
                 Admin Login
-              </button>
-              <button
-                onClick={() => (window.location.href = "/student-login")}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center"
-              >
-                <UserCircle2 className="w-5 h-5 mr-2" />
-                Student Login
-              </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="text-gray-400 hover:text-white p-2"
-              >
-                {menuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <MenuIcon className="w-6 h-6" />
-                )}
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        {menuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <button
-                onClick={() => (window.location.href = "/admin-login")}
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium w-full text-left"
-              >
-                Admin Login
-              </button>
-              <button
-                onClick={() => (window.location.href = "/student-login")}
-                className="bg-blue-600 text-white block px-3 py-2 rounded-md text-base font-medium w-full text-left hover:bg-blue-700"
-              >
-                Student Login
-              </button>
-            </div>
-          </div>
-        )}
       </nav>
-
       {/* Hero Section */}
-      <main>
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="lg:flex lg:items-center lg:gap-12">
-            {/* Text Content */}
-            <div className="lg:w-1/2">
-              <h1 className="text-4xl font-bold text-white mb-6">
-                Your One-Stop Platform for College Events
-              </h1>
-              <p className="text-xl text-gray-300 mb-8">
-                Discover, manage, and participate in a wide range of college
-                events. From tech conferences to cultural festivals, stay
-                updated with all the exciting happenings on campus.
-              </p>
-              <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex">
-                <button
-                  onClick={() => (window.location.href = "/events")}
-                  className="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white rounded-md 
-                           font-medium hover:bg-blue-700 transition-colors duration-200"
-                >
-                  Browse Events
-                </button>
-                <button
-                  onClick={() => (window.location.href = "/about")}
-                  className="w-full sm:w-auto px-8 py-3 bg-gray-700 text-white rounded-md 
-                           font-medium hover:bg-gray-600 transition-colors duration-200"
-                >
-                  Learn More
-                </button>
-              </div>
-            </div>
+      <header className="relative pt-24 pb-20 text-center">
+        <div className="absolute inset-0 bg-gradient-to-r from-teal-500 via-blue-500 to-purple-500 opacity-20 blur-3xl -z-10"></div>
+        <motion.h1
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500"
+        >
+          Create. Curate. Share.
+        </motion.h1>
+        <p className="text-lg text-gray-300 mt-4">
+          Revolutionize the way you store and showcase your memories.
+        </p>
+        <motion.button
+          whileHover={{
+            backgroundColor: ["#4f46e5", "#22d3ee", "#4f46e5"],
+            transition: { duration: 0.5, repeat: Infinity },
+          }}
+          whileTap={{ scale: 0.9 }}
+          className="mt-6 px-8 py-3 bg-indigo-600 text-white rounded-lg font-medium shadow-lg hover:bg-indigo-700 transition duration-300"
+        >
+          Get Started
+        </motion.button>
+      </header>
 
-            {/* Image Section */}
-            <div className="mt-10 lg:mt-0 lg:w-1/2">
-              <div className="bg-gray-800 rounded-lg overflow-hidden aspect-video">
-                {/* Placeholder for image */}
-                <div className="w-full h-full flex items-center justify-center text-gray-500">
-                  <p className="text-center">
-                    Event Image Placeholder
-                    <br />
-                    (Add your image here)
-                  </p>
-                </div>
-                {/* Once you have an image, replace the div above with: */}
-                {/* <img 
-                  src="/path-to-your-image.jpg" 
-                  alt="College Events"
-                  className="w-full h-full object-cover"
-                /> */}
-              </div>
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Easy Access
-              </h3>
-              <p className="text-gray-300">
-                Login as a student or admin to access different features and
-                manage events.
-              </p>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Event Updates
-              </h3>
-              <p className="text-gray-300">
-                Stay informed about upcoming events, changes, and important
-                announcements.
-              </p>
-            </div>
-            <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-white mb-3">
-                Resource Access
-              </h3>
-              <p className="text-gray-300">
-                Download event-related resources, images, and materials with
-                ease.
-              </p>
-            </div>
+      {/* How It Works Section */}
+      <section id="features" className="py-16">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-white mb-12"
+          >
+            How It Works
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Camera,
+                title: "Capture",
+                description: "Upload your stunning photos seamlessly.",
+              },
+              {
+                icon: Image,
+                title: "Organize",
+                description: "Smart AI tools to keep your gallery tidy.",
+              },
+              {
+                icon: Globe,
+                title: "Share",
+                description: "Broadcast your creativity to the world.",
+              },
+            ].map(({ icon: Icon, title, description }, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 1.05 }}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
+              >
+                <Icon className="w-12 h-12 text-white mx-auto mb-4" />
+                <h3 className="text-2xl font-semibold text-white mb-2">
+                  {title}
+                </h3>
+                <p className="text-gray-200">{description}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Gallery Preview */}
+      <section id="gallery" className="py-16 bg-black">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-white mb-12"
+          >
+            Featured Gallery
+          </motion.h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((item) => (
+              <motion.div
+                key={item}
+                whileHover={{ scale: 1.05 }}
+                className="bg-gradient-to-tr from-teal-400 to-purple-500 rounded-lg aspect-video shadow-lg"
+              >
+                <div className="w-full h-full flex items-center justify-center">
+                  <p className="text-white text-lg font-medium">Photo {item}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
 
-export default HomePage;
+export default SmartPhotoDriveHome;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Header from "./Header";
 import CardContainer from "./CardContainer";
 import EventManagement from "./EventManagement";
@@ -42,28 +42,163 @@ const New_Event_Page = () => {
       fileContent: null,
     },
   ]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const addTask = (eventData) => {
-    const newTask = {
-      id: Date.now(),
-      ...eventData,
-      fileContent: eventData.file ? URL.createObjectURL(eventData.file) : null,
-    };
-    setTasks([...tasks, newTask]);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  // Filter tasks based on search query
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) =>
+      Object.values(task)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+    );
+  }, [tasks, searchQuery]);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("/api/events");
+      if (!response.ok) {
+        throw new Error("Failed to fetch events");
+      }
+      const data = await response.json();
+      setTasks(
+        data.map((event) => ({
+          ...event,
+          fileContent: event.file ? URL.createObjectURL(event.file) : null,
+        }))
+      );
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setError("Failed to load events. Please try again later.");
+      setLoading(false);
+    }
   };
 
-  const removeTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const compressImage = async (file, maxWidth = 800) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // Calculate new dimensions maintaining aspect ratio
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw and compress
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with reduced quality
+          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+          resolve(compressedBase64);
+        };
+      };
+    });
+  };
+
+  const addTask = async (eventData) => {
+    try {
+      let compressedImage = null;
+
+      if (eventData.file) {
+        if (eventData.file.type.startsWith("image/")) {
+          compressedImage = await compressImage(eventData.file);
+        }
+      }
+
+      const formData = new FormData();
+
+      Object.keys(eventData).forEach((key) => {
+        if (key !== "file") {
+          formData.append(key, eventData[key]);
+        }
+      });
+
+      // Add compressed image if exists
+      if (compressedImage) {
+        // Convert base64 to blob
+        const response = await fetch(compressedImage);
+        const blob = await response.blob();
+        formData.append("image", blob, "compressed_image.jpg");
+      } else if (eventData.file) {
+        // If it's not an image, send the original file
+        formData.append("file", eventData.file);
+      }
+
+      const response = await fetch("/api/events", {
+        method: "POST",
+        body: formData, // Send as FormData instead of JSON
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add event");
+      }
+
+      const newEvent = await response.json();
+      const newTask = {
+        ...newEvent,
+        fileContent:
+          compressedImage ||
+          (eventData.file ? URL.createObjectURL(eventData.file) : null),
+      };
+
+      setTasks([...tasks, newTask]);
+    } catch (error) {
+      console.error("Error adding event:", error);
+      alert("Failed to add event. Please try again.");
+    }
+  };
+
+  const removeTask = async (id) => {
+    try {
+      const response = await fetch(`/api/events/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete event: ${response.statusText}`);
+      }
+
+      setTasks(tasks.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      alert("Failed to delete event. Please try again.");
+    }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-900">
       <div className="flex-1 ml-20 p-5">
-        <Header />
+        <Header searchQuery={searchQuery} onSearchChange={handleSearch} />
         <div className="mt-8 space-y-8">
-          <CardContainer taskCount={tasks.length} />
+          <CardContainer taskCount={filteredTasks.length} />
           <EventManagement
-            tasks={tasks}
+            tasks={filteredTasks}
             addTask={addTask}
             removeTask={removeTask}
           />

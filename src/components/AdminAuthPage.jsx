@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 
-const AuthPage = () => {
+const AdminAuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [publicKey, setPublicKey] = useState(null);
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ const AuthPage = () => {
   useEffect(() => {
     const fetchPublicKey = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/public-key");
+        const response = await fetch("http://localhost:5000/api/");
         const data = await response.json();
 
         // Convert base64 public key to CryptoKey object
@@ -98,6 +98,7 @@ const AuthPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        mode: "no-cors",
         body: JSON.stringify({
           ...formData,
           password: encryptedPassword,
@@ -225,4 +226,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default AdminAuthPage;
