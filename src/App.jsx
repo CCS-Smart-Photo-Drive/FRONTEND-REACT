@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import HomePage from "./components/HomePage";
+import SmartPhotoDriveHome from "./components/HomePage";
 import UserAuthPage from "./components/UserAuthPage";
 import AdminAuthPage from "./components/AdminAuthPage";
 import EventDetails from "./components/EventDetails";
@@ -34,7 +34,7 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<EventDetails />} />
         {/* Protected student routes */}
         <Route
           path="/admin/events"

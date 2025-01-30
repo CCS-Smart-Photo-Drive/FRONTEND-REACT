@@ -1,3 +1,60 @@
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+// import { LogOut, Calendar, User } from "lucide-react";
+
+// const NavbarUser = () => {
+//   const navigate = useNavigate();
+
+//   const handleLogout = () => {
+//     localStorage.removeItem("token");
+//     localStorage.removeItem("profilePicture");
+//     navigate("/login");
+//   };
+
+//   return (
+//     <nav className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50">
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+//         <div className="flex items-center justify-between h-16">
+//           {/* Logo/Brand */}
+//           <div className="flex-shrink-0">
+//             <span className="text-xl font-bold text-white">PhotoDrive</span>
+//           </div>
+
+//           {/* Navigation Links */}
+//           <div className="flex items-center space-x-4">
+//             <button
+//               onClick={() => navigate("/events")}
+//               className="flex items-center px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150"
+//             >
+//               <Calendar className="w-5 h-5 mr-2" />
+//               Events
+//             </button>
+
+//             <button
+//               onClick={() => navigate("/profile")}
+//               className="flex items-center px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150"
+//             >
+//               <User className="w-5 h-5 mr-2" />
+//               Profile
+//             </button>
+
+//             <button
+//               onClick={handleLogout}
+//               className="flex items-center px-3 py-2 rounded-md text-red-400 hover:text-white hover:bg-red-600 transition duration-150"
+//             >
+//               <LogOut className="w-5 h-5 mr-2" />
+//               Logout
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// export default NavbarUser;
+
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Calendar, User } from "lucide-react";
@@ -12,19 +69,26 @@ const NavbarUser = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50">
+    <nav className="fixed top-0 left-0 right-0 bg-black bg-opacity-80 shadow-lg z-50 py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo/Brand */}
-          <div className="flex-shrink-0">
-            <span className="text-xl font-bold text-white">PhotoDrive</span>
+          {/* Logo and Brand */}
+          <div className="flex items-center space-x-3">
+            <img
+              src="path-to-your-logo.png" // Replace with the actual path to your logo
+              alt="Creating Computing Society Logo"
+              className="w-8 h-8 object-contain" // Adjust size as needed
+            />
+            <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500">
+              SmartPhotoDrive
+            </span>
           </div>
 
           {/* Navigation Links */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             <button
               onClick={() => navigate("/events")}
-              className="flex items-center px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150"
+              className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 rounded-md"
             >
               <Calendar className="w-5 h-5 mr-2" />
               Events
@@ -32,7 +96,7 @@ const NavbarUser = () => {
 
             <button
               onClick={() => navigate("/profile")}
-              className="flex items-center px-3 py-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150"
+              className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 rounded-md"
             >
               <User className="w-5 h-5 mr-2" />
               Profile
@@ -40,7 +104,7 @@ const NavbarUser = () => {
 
             <button
               onClick={handleLogout}
-              className="flex items-center px-3 py-2 rounded-md text-red-400 hover:text-white hover:bg-red-600 transition duration-150"
+              className="flex items-center px-3 py-2 text-red-400 hover:text-white hover:bg-red-600 transition duration-150 rounded-md"
             >
               <LogOut className="w-5 h-5 mr-2" />
               Logout
