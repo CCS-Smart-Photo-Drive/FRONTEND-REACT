@@ -180,11 +180,13 @@ const EventForm = ({ onSubmit, onClose }) => {
   const handleImageUpload = (files) => {
     const imageFiles = Array.from(files)
       .filter((file) => file.type.startsWith("image/"))
-      .map((file) => ({
+      .map((file) => {
+        console.log(file);
+        return {
         file,
         preview: URL.createObjectURL(file),
         name: file.name,
-      }));
+      }});
 
     setEventData((prevState) => ({
       ...prevState,

@@ -4,46 +4,82 @@ import CardContainer from "./CardContainer";
 import EventManagement from "./EventManagement";
 import { LogOut, Calendar, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import JSZip from "jszip";
+
+function convertEventDataToTask(eventData, id) {
+    // name: string;
+    // description: string;
+    // organizedBy: string;
+    // date: string;
+    // images: never[];
+    // to
+    // {
+    //   id: 1,
+    //   name: "Event 1",
+    //   description: "Description 1",
+    //   organizedBy: "Organizer 1",
+    //   date: "2023-06-01",
+    //   file: null,
+    //   fileContent: null,
+    // }
+    return {
+      id,
+      name: eventData.name,
+      description: eventData.description,
+      organizedBy: eventData.organizedBy,
+      date: eventData.date,
+      file: null,
+      fileContent: null,
+    }
+}
+
+function eventToTask(event) {
+    // date: "2025-01-17"
+    // description: "HACK"
+    // event_manager_name: "hari"
+    // event_name: "HACK"
+    //organized_by: "CCS"
+    //_id: "679ba1700cddb265d552edc6"
+    //
+    // to
+    //
+    // {
+    //   id: 1,
+    //   name: "Event 1",
+    //   description: "Description 1",
+    //   organizedBy: "Organizer 1",
+    //   date: "2023-06-01",
+    //   file: null,
+    //   fileContent: null,
+    // }
+
+    return {
+      id: event._id,
+      name: event.event_name,
+      description: event.description,
+      organizedBy: event.organized_by,
+      date: event.date,
+      file: null,
+      fileContent: null,
+    }
+}
+
+async function zipImages(images) {
+  if (images.length == 0) {
+    alert("Please select files.");
+    return;
+  }
+
+  const zip = new JSZip();
+  for (let i = 0; i < images.length; i++) {
+    zip.file(`${i}.jpg`, images[i], { binary: true });
+  }
+
+  return await zip.generateAsync({ type: "blob" });
+}
 
 const New_Event_Page = () => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      name: "Event 1",
-      description: "Description 1",
-      organizedBy: "Organizer 1",
-      date: "2023-06-01",
-      file: null,
-      fileContent: null,
-    },
-    {
-      id: 2,
-      name: "Event 2",
-      description: "Description 2",
-      organizedBy: "Organizer 2",
-      date: "2023-06-15",
-      file: null,
-      fileContent: null,
-    },
-    {
-      id: 3,
-      name: "Event 3",
-      description: "Description 3",
-      organizedBy: "Organizer 3",
-      date: "2023-06-30",
-      file: null,
-      fileContent: null,
-    },
-    {
-      id: 4,
-      name: "Event 4",
-      description: "Description 4",
-      organizedBy: "Organizer 4",
-      date: "2023-07-01",
-      file: null,
-      fileContent: null,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,8 +88,9 @@ const New_Event_Page = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("profilePicture");
-    navigate("/login");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -74,16 +111,19 @@ const New_Event_Page = () => {
   };
   const fetchEvents = async () => {
     try {
-      const response = await fetch("/api/events");
+      const body = new FormData();
+      body.append("event_manager_name", localStorage.getItem("user_name"));
+      const response = await fetch(`${API_URL}/my_events`, {
+        body,
+        method: "POST"
+      });
+
       if (!response.ok) {
         throw new Error("Failed to fetch events");
       }
       const data = await response.json();
       setTasks(
-        data.map((event) => ({
-          ...event,
-          fileContent: event.file ? URL.createObjectURL(event.file) : null,
-        }))
+        data.events.map((event, i) => eventToTask(event))
       );
       setLoading(false);
     } catch (error) {
@@ -130,49 +170,33 @@ const New_Event_Page = () => {
 
   const addTask = async (eventData) => {
     try {
-      let compressedImage = null;
-
-      if (eventData.file) {
-        if (eventData.file.type.startsWith("image/")) {
-          compressedImage = await compressImage(eventData.file);
-        }
+      if (eventData.images.length == 0) {
+        alert("Images are required");
+        return;
       }
+
+      const images = eventData.images.map(async (file) => file.file);
+      const zipFile = await zipImages(images);
 
       const formData = new FormData();
+      formData.set("event_name", eventData.name);
+      formData.set("event_manager_name", localStorage.getItem("user_name"));
+      formData.set("organized_by", eventData.organizedBy);
+      formData.set("description", eventData.description);
+      formData.set("date", eventData.date);
+      formData.append("file", zipFile, "images.zip");
 
-      Object.keys(eventData).forEach((key) => {
-        if (key !== "file") {
-          formData.append(key, eventData[key]);
-        }
-      });
-
-      // Add compressed image if exists
-      if (compressedImage) {
-        // Convert base64 to blob
-        const response = await fetch(compressedImage);
-        const blob = await response.blob();
-        formData.append("image", blob, "compressed_image.jpg");
-      } else if (eventData.file) {
-        // If it's not an image, send the original file
-        formData.append("file", eventData.file);
-      }
-
-      const response = await fetch("/api/events", {
+      const response = await fetch(`${API_URL}/add_new_event`, {
         method: "POST",
-        body: formData, // Send as FormData instead of JSON
+        body: formData,
       });
-
+      
+      console.log(await response.json())
       if (!response.ok) {
         throw new Error("Failed to add event");
       }
 
-      const newEvent = await response.json();
-      const newTask = {
-        ...newEvent,
-        fileContent:
-          compressedImage ||
-          (eventData.file ? URL.createObjectURL(eventData.file) : null),
-      };
+      const newTask = convertEventDataToTask(eventData, tasks.length);
 
       setTasks([...tasks, newTask]);
     } catch (error) {
@@ -183,7 +207,7 @@ const New_Event_Page = () => {
 
   const removeTask = async (id) => {
     try {
-      const response = await fetch(`/api/events/${id}`, {
+      const response = await fetch(`/events/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -208,7 +232,7 @@ const New_Event_Page = () => {
           <div className="flex items-center justify-between h-16">
             {/* Logo/Brand */}
             <div className="flex-shrink-0">
-              <span className="text-xl font-bold text-white">PhotoDrive</span>
+              <span className="text-xl font-bold text-white">SmartPhotoDrive</span>
             </div>
 
             {/* Navigation Links */}

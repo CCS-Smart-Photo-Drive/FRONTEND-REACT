@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { LogOut, Upload, Image as ImageIcon } from "lucide-react";
+import { API_URL } from "../config";
 
 const Dashboard = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -14,7 +15,7 @@ const Dashboard = () => {
 
   const fetchUserImages = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/images", {
+      const response = await fetch(`${API_URL}/images`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -50,7 +51,7 @@ const Dashboard = () => {
     formData.append("image", selectedFile);
 
     try {
-      const response = await fetch("http://localhost:5000/api/upload", {
+      const response = await fetch(`${API_URL}/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

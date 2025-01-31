@@ -7,26 +7,44 @@ import {
 } from "react-router-dom";
 
 import SmartPhotoDriveHome from "./components/HomePage";
-import UserAuthPage from "./components/UserAuthPage";
-import AdminAuthPage from "./components/AdminAuthPage";
 import EventDetails from "./components/EventDetails";
 import ProfilePage from "./components/UserProfile";
 import New_Event_Page from "./components/New-Event Page/New_Event_Page";
 import About_Page from "./components/About-Us Page/About_Page";
-import { Home } from "lucide-react";
+import { API_URL } from "./config";
+import { VerifyLogin } from "./components/VerifyLogin";
 
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/student-login" replace />;
+const PrivateRoute = async ({ children }) => {
+  const response = await fetch(`${API_URL}/get_user_status`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  if (!response.ok) {
+    return <Navigate to="/" replace />;
+  }
+  const data = await response.json();
+  if (!data.is_admin) {
+    return children;
+  }
+  return <Navigate to="/" replace />;
 };
 
-const AdminRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  const isAdmin = localStorage.getItem("isAdmin") === "true";
-  if (!token || !isAdmin) {
-    return <Navigate to="/admin-login" replace />;
+const AdminRoute = async ({ children }) => {
+  const response = await fetch(`${API_URL}/get_user_status`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  if (!response.ok) {
+    return <Navigate to="/" replace />;
   }
-  return children;
+  const data = await response.json();
+  if (data.is_admin) {
+    return children;
+  }
+
+  return <Navigate to="/" replace />;
 };
 
 const App = () => {
@@ -34,54 +52,39 @@ const App = () => {
     <Router>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<EventDetails />} />
-        {/* Protected student routes */}
+        <Route path="/" element={<SmartPhotoDriveHome />} />
         <Route
-          path="/admin/events"
-          element={
-            // <PrivateRoute>
-            <New_Event_Page />
-            /* </PrivateRoute> */
-          }
+          path="/about-us"
+          element={<About_Page />}
         />
+        <Route
+          path="/verify_login"
+          element={<VerifyLogin />}
+        />
+        {/* Protected user routes */}
         <Route
           path="/profile"
           element={
-            // <PrivateRoute>
+            <PrivateRoute>
             <ProfilePage />
-            /* </PrivateRoute> */
-          }
-        />
-        <Route
-          path="/new-event"
-          element={
-            // <PrivateRoute>
-            <New_Event_Page />
-            /* </PrivateRoute> */
+            </PrivateRoute>
           }
         />
         <Route
           path="/events"
           element={
-            // <PrivateRoute>
+            <PrivateRoute>
             <EventDetails />
-            /* </PrivateRoute> */
+            </PrivateRoute>
           }
         />
+         {/* Protected admin routes */}
         <Route
-          path="/user/login"
+          path="/manager_dashboard"
           element={
-            // <PrivateRoute>
-            <UserAuthPage />
-            // </PrivateRoute>
-          }
-        />
-        <Route
-          path="/about-us"
-          element={
-            // <AdminRoute>
-            <About_Page />
-            // </AdminRoute>
+            <AdminRoute>
+            <New_Event_Page />
+            </AdminRoute>
           }
         />
 
