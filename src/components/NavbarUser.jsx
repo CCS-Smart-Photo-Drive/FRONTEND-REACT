@@ -1,15 +1,26 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Calendar, User } from "lucide-react";
+import { motion } from "framer-motion";
+import { API_URL } from "../config";
 
-export const NavbarUser = () => {
+export const NavbarUser = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user_name");
     localStorage.removeItem("email");
-    localStorage.removeItem("is_admin");
+    localStorage.removeItem("profile_picture");
+    onLogout();
+    fetch(`${API_URL}/logout`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      mode: "cors",
+      credentials: "include",
+    });
     navigate("/");
   };
 
@@ -31,6 +42,11 @@ export const NavbarUser = () => {
 
           {/* Navigation Links */}
           <div className="flex items-center space-x-6">
+          <div className="hidden md:flex space-x-8">
+          <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
+            About Us
+          </motion.a>
+        </div>
             <button
               onClick={() => navigate("/events")}
               className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 rounded-md"

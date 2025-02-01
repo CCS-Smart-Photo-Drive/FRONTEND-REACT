@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { User, Camera, Upload, Edit, Save, LogOut } from "lucide-react";
 import NavbarUser from "../components/NavbarUser";
+import { API_URL } from "../config"
 
 const ProfilePage = () => {
   const [imagePreview, setImagePreview] = useState(null);
@@ -13,14 +14,7 @@ const ProfilePage = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    ((new Response(localStorage.getItem("profile_picture"))).blob()).then((file) => {
-      if (file == null) {
-        return;
-      }
-  
-      const preview = URL.createObjectURL(file);
-      setImagePreview(preview);
-    });
+    setImagePreview(localStorage.getItem("profile_picture"));
   }, [])
 
   const [passwordData, setPasswordData] = useState({
@@ -52,7 +46,7 @@ const ProfilePage = () => {
   }, []);
 
   const handleImageUpload = async (file) => {
-      if (!file.type.startsWith("image/")) {
+    if (!file.type.startsWith("image/")) {
       setError("Please select an image file");
       return;
     }
@@ -68,14 +62,10 @@ const ProfilePage = () => {
 
       const formData = new FormData();
       formData.append("user_name", localStorage.getItem("user_name"));
-      formData.append("user_email", localStorage.getItem("user_email"));
+      formData.append("user_email", localStorage.getItem("email"));
       formData.append("user_file", file);
-      console.log(file);
 
       const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Authentication required");
-      }
 
       const response = await fetch(
         `${API_URL}/my_dashboard`,
@@ -92,21 +82,20 @@ const ProfilePage = () => {
         throw new Error("Failed to upload image");
       }
 
-      // const data = await response.json();
-      
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
 
-      const newPreviewUrl = URL.createObjectURL(file);
-      setImagePreview(newPreviewUrl);
-      setSuccess("Profile picture updated successfully!");
-      localStorage.setItem("profile_picture", file.readAsFile());
+      reader.onload = () => {
+        localStorage.setItem("profile_picture", reader.result);
+        setImagePreview(reader.result);
+        setSuccess("Profile picture updated successfully!");
+      };
 
       setTimeout(() => {
         setSuccess("");
       }, 3000);
     } catch (err) {
+      console.log(err);
       setError(err.message || "Failed to upload image");
     } finally {
       setIsUploading(false);
@@ -189,7 +178,7 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <NavbarUser />
+      <NavbarUser onLogout={() => {}} />
       <div className="pt-24 px-4 pb-8 lg:w-[400px] m-auto">
         {/* Profile Header */}
         <div className="text-center">

@@ -1,51 +1,93 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion";
 import { Camera, Image, Globe } from "lucide-react";
 import { NavbarUser } from "./NavbarUser";
+import { NavbarAdmin } from "./NavbarAdmin";
+import { API_URL } from "../config";
 
 const FuturisticHome = () => {
-  const isLoggedIn = localStorage.getItem("token") !== null;
+  const [loggedIn, setLoggedIn] = useState("none");
+  const navigate = useNavigate();
 
   const clientId = '679a6500b3cee642388a3e77'; 
   const handleLogin = (isAdmin) => {
+    if (isAdmin) {
+      navigate("/auth/admin");
+    } else {
+      navigate("/auth/user");
+    }
+    return;
     localStorage.setItem("attempted_admin_login", isAdmin);
     const callbackUrl = `${window.location.href}verify_login`;
     const authUrl = `https://auth.ccstiet.com/auth/google?clientid=${clientId}&callback=${callbackUrl}`;
     window.location.href = authUrl;
   };
 
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`${API_URL}/get_user_status`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      });
+      console.log(await response.clone().text())
+      if (!response.ok) {
+        console.log('set: none');
+        setLoggedIn("none");
+      }
+      const data = await response.json();
+      if (data.status) {
+        console.log('set: admin');
+        setLoggedIn("admin");
+      } else {
+        console.log('set: user');
+        setLoggedIn("user");
+      }
+    })();
+  }, []);
+
+  let navbar;
+  console.log(loggedIn);
+  if (loggedIn == "admin") {
+    navbar = <NavbarAdmin onLogout={() => setLoggedIn("none")} />;
+  } else if (loggedIn == "user") {
+    navbar = <NavbarUser onLogout={() => setLoggedIn("none")} />;
+  } else {
+    navbar = (
+      <nav className="fixed top-0 w-full bg-opacity-30 backdrop-blur-md shadow-xl z-50 py-4 border-b border-gray-800">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="flex items-center space-x-3">
+          <img src="/logo.png" alt="SmartPhotoDrive" className="w-12 h-12" />
+          <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+            SmartPhotoDrive
+          </span>
+        </motion.div>
+        <div className="hidden md:flex space-x-8">
+          <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
+            About Us
+          </motion.a>
+        </div>
+        <div className="flex space-x-4">
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin(false)} className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            User Login
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin(true)} className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            Admin Login
+          </motion.button>
+        </div>
+      </div>
+    </nav>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-black text-white font-sans overflow-hidden relative">
       <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900 via-black to-black"></div>
-      
-      {
-      isLoggedIn ? <NavbarUser /> : (
-        <nav className="fixed top-0 w-full bg-opacity-30 backdrop-blur-md shadow-xl z-50 py-4 border-b border-gray-800">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="flex items-center space-x-3">
-            <img src="/logo.png" alt="SmartPhotoDrive" className="w-12 h-12" />
-            <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
-              SmartPhotoDrive
-            </span>
-          </motion.div>
-          <div className="hidden md:flex space-x-8">
-            <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
-              About Us
-            </motion.a>
-          </div>
-          <div className="flex space-x-4">
-            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin(false)} className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
-              User Login
-            </motion.button>
-            <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin(true)} className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
-              Admin Login
-            </motion.button>
-          </div>
-        </div>
-      </nav>
-      )
-    }
-
+      {navbar}
       <header className="relative pt-40 pb-24 text-center z-10">
         <motion.h1 initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }} className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600">
           Capture. Organize. Share.

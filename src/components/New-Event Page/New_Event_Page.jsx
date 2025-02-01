@@ -5,6 +5,8 @@ import EventManagement from "./EventManagement";
 import { LogOut, Calendar, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import JSZip from "jszip";
+import NavbarAdmin from "../NavbarAdmin";
+import { API_URL } from "../../config"
 
 function convertEventDataToTask(eventData, id) {
     // name: string;
@@ -84,15 +86,6 @@ const New_Event_Page = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_name");
-    localStorage.removeItem("user_email");
-    navigate("/");
-  };
-
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -115,7 +108,11 @@ const New_Event_Page = () => {
       body.append("event_manager_name", localStorage.getItem("user_name"));
       const response = await fetch(`${API_URL}/my_events`, {
         body,
-        method: "POST"
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
       });
 
       if (!response.ok) {
@@ -131,41 +128,6 @@ const New_Event_Page = () => {
       setError("Failed to load events. Please try again later.");
       setLoading(false);
     }
-  };
-
-  const compressImage = async (file, maxWidth = 800) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-
-          // Calculate new dimensions maintaining aspect ratio
-          let width = img.width;
-          let height = img.height;
-
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-
-          // Draw and compress
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // Convert to base64 with reduced quality
-          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
-          resolve(compressedBase64);
-        };
-      };
-    });
   };
 
   const addTask = async (eventData) => {
@@ -189,6 +151,10 @@ const New_Event_Page = () => {
       const response = await fetch(`${API_URL}/add_new_event`, {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
       });
       
       console.log(await response.json())
@@ -210,8 +176,10 @@ const New_Event_Page = () => {
       const response = await fetch(`/events/${id}`, {
         method: "DELETE",
         headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
+        mode: "cors",
       });
 
       if (!response.ok) {
@@ -227,27 +195,7 @@ const New_Event_Page = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-900">
-      <nav className="fixed top-0 left-0 right-0 bg-gray-800 shadow-lg z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo/Brand */}
-            <div className="flex-shrink-0">
-              <span className="text-xl font-bold text-white">SmartPhotoDrive</span>
-            </div>
-
-            {/* Navigation Links */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={handleLogout}
-                className="flex items-center px-3 py-2 rounded-md text-red-400 hover:text-white hover:bg-red-600 transition duration-150"
-              >
-                <LogOut className="w-5 h-5 mr-2" />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <NavbarAdmin onLogout={() => {}} />
       <div className="flex-1 ml-20 p-5">
         <Header searchQuery={searchQuery} onSearchChange={handleSearch} />
         <div className="mt-8 space-y-8">

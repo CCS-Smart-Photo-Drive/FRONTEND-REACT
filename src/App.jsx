@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,38 +13,63 @@ import New_Event_Page from "./components/New-Event Page/New_Event_Page";
 import About_Page from "./components/About-Us Page/About_Page";
 import { API_URL } from "./config";
 import { VerifyLogin } from "./components/VerifyLogin";
+import UserAuthPage from "./components/UserAuthPage";
+import AdminAuthPage from "./components/AdminAuthPage";
 
-const PrivateRoute = async ({ children }) => {
-  const response = await fetch(`${API_URL}/get_user_status`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
-  if (!response.ok) {
-    return <Navigate to="/" replace />;
-  }
-  const data = await response.json();
-  if (!data.is_admin) {
-    return children;
-  }
-  return <Navigate to="/" replace />;
+const PrivateRoute = ({ children }) => {
+  const [render, setRender] = useState(<div>Loading...</div>);
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`${API_URL}/get_user_status`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        setRender(<Navigate to="/" replace />);
+        return;
+      }
+      const data = await response.json();
+      if (!data.status) {
+        setRender(children);
+        return;
+      }
+      setRender(<Navigate to="/" replace />);
+    })()
+  })
+  
+  return render;
 };
 
-const AdminRoute = async ({ children }) => {
-  const response = await fetch(`${API_URL}/get_user_status`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
-  if (!response.ok) {
-    return <Navigate to="/" replace />;
-  }
-  const data = await response.json();
-  if (data.is_admin) {
-    return children;
-  }
+const AdminRoute = ({ children }) => {
+  const [render, setRender] = useState(<div>Loading...</div>);
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`${API_URL}/get_user_status`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        setRender(<Navigate to="/" replace />);
+        return;
+      }
+      const data = await response.json();
+      if (data.status) {
+        setRender(children);
+        return;
+      }
+      setRender(<Navigate to="/" replace />);
+    })()
+  })
 
-  return <Navigate to="/" replace />;
+  return render;
 };
 
 const App = () => {
@@ -56,6 +81,14 @@ const App = () => {
         <Route
           path="/about-us"
           element={<About_Page />}
+        />
+        <Route
+          path="/auth/user"
+          element={<UserAuthPage />}
+        />
+        <Route
+          path="/auth/admin"
+          element={<AdminAuthPage />}
         />
         <Route
           path="/verify_login"

@@ -21,7 +21,15 @@ export function VerifyLogin() {
             localStorage.removeItem("token");
             localStorage.removeItem("user_name");
             localStorage.removeItem("email");
-            localStorage.removeItem("is_admin");
+            localStorage.removeItem("profile_picture");
+            fetch(`${API_URL}/logout`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                mode: "cors",
+                credentials: "include",
+              });
             return;
         }
         const data = await response.json();
@@ -30,7 +38,6 @@ export function VerifyLogin() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user_name", data.user.user_name);
         localStorage.setItem("email", data.user.email);
-        localStorage.setItem("is_admin", data.user.is_admin);
         navigate(data.user.is_admin ? "/manager_dashboard" : "/profile");
     })()
     }, []);

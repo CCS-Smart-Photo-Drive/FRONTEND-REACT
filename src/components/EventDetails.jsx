@@ -76,6 +76,11 @@ const EventsPage = () => {
       const fetchDownloadResponse = await fetch(`${API_URL}/get_photos/${eventName}`, {
         method: "POST",
         body,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
+        credentials: "include",
       });
 
       if (!fetchDownloadResponse.ok) {
@@ -83,7 +88,13 @@ const EventsPage = () => {
       }
 
       const downloadTarget = (await fetchDownloadResponse.json()).download;
-      const response = await fetch(`${API_URL}/get_photos/${eventName}?download=${downloadTarget}`);
+      const response = await fetch(`${API_URL}/get_photos/${eventName}?download=${downloadTarget}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        mode: "cors",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to get download link");
@@ -146,7 +157,7 @@ const EventsPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white pt-24 px-4 pb-8">
-      <NavbarUser />
+      <NavbarUser onLogout={() => {}} />
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <motion.h1
