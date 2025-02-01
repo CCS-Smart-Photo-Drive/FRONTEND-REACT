@@ -8,36 +8,25 @@ export function VerifyLogin() {
     (async () => {
         const query = new URLSearchParams(location.search);
         const jwtToken = query.get('token');
-        const isAdmin = localStorage.getItem("attempted_admin_login") === "true";
-        localStorage.removeItem("attempted_admin_login");
 
-        const response = await fetch(`${API_URL}/auth_${isAdmin ? 'admin' : 'user'}`, {
+        const response = await fetch(`${API_URL}/sso_auth`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${jwtToken}`
             },
+            mode: "cors",
         });
-        if (!response.ok) {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user_name");
-            localStorage.removeItem("email");
-            localStorage.removeItem("profile_picture");
-            fetch(`${API_URL}/logout`, {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                mode: "cors",
-                credentials: "include",
-              });
-            return;
-        }
         const data = await response.json();
-        // { user: { user_name, email, is_admin(bool) }, token}
+        // { user: { user_name, email, is_admin(bool), profile_picture (only on login) }, token}
 
         localStorage.setItem("token", data.token);
         localStorage.setItem("user_name", data.user.user_name);
         localStorage.setItem("email", data.user.email);
+
+        if (data.user.profile_picture) {
+            localStorage.setItem("profile_picture", data.user.profile_picture);
+        }
+
         navigate(data.user.is_admin ? "/manager_dashboard" : "/profile");
     })()
     }, []);

@@ -82,14 +82,14 @@ const App = () => {
           path="/about-us"
           element={<About_Page />}
         />
-        <Route
+        {/* <Route
           path="/auth/user"
           element={<UserAuthPage />}
         />
         <Route
           path="/auth/admin"
           element={<AdminAuthPage />}
-        />
+        /> */}
         <Route
           path="/verify_login"
           element={<VerifyLogin />}

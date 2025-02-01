@@ -84,7 +84,9 @@ const EventsPage = () => {
       });
 
       if (!fetchDownloadResponse.ok) {
-        throw new Error("Failed to get download link");
+        const data = await fetchDownloadResponse.json();
+        console.log(data);
+        throw new Error(data.error);
       }
 
       const downloadTarget = (await fetchDownloadResponse.json()).download;
@@ -97,7 +99,9 @@ const EventsPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get download link");
+        const data = await response.json();
+        console.log(data);
+        throw new Error(data.error);
       }
 
       const blob = await response.blob();
@@ -112,7 +116,7 @@ const EventsPage = () => {
 
     } catch (err) {
       console.log(err);
-      setDownloadError("Failed to download images. Please try again.");
+      setDownloadError(err.message);
     } finally {
       setDownloadLoading(false);
     }

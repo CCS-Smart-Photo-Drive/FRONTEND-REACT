@@ -8,17 +8,9 @@ import { API_URL } from "../config";
 
 const FuturisticHome = () => {
   const [loggedIn, setLoggedIn] = useState("none");
-  const navigate = useNavigate();
 
   const clientId = '679a6500b3cee642388a3e77'; 
-  const handleLogin = (isAdmin) => {
-    if (isAdmin) {
-      navigate("/auth/admin");
-    } else {
-      navigate("/auth/user");
-    }
-    return;
-    localStorage.setItem("attempted_admin_login", isAdmin);
+  const handleLogin = () => {
     const callbackUrl = `${window.location.href}verify_login`;
     const authUrl = `https://auth.ccstiet.com/auth/google?clientid=${clientId}&callback=${callbackUrl}`;
     window.location.href = authUrl;
@@ -38,6 +30,7 @@ const FuturisticHome = () => {
       if (!response.ok) {
         console.log('set: none');
         setLoggedIn("none");
+        return;
       }
       const data = await response.json();
       if (data.status) {
@@ -72,11 +65,8 @@ const FuturisticHome = () => {
           </motion.a>
         </div>
         <div className="flex space-x-4">
-          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin(false)} className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
-            User Login
-          </motion.button>
-          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin(true)} className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
-            Admin Login
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin()} className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            Login
           </motion.button>
         </div>
       </div>
