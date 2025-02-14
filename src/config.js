@@ -2,7 +2,7 @@ const IS_DEV = import.meta.env.MODE === 'development';
 
 //todo put api here
 export const API_URL = (domain) => IS_DEV ? 'http://localhost:5000' : (
-    domain == 'https://ccssmartdrive.vercel.app/'
+    domain.includes('https://ccssmartdrive.vercel.app/')
     ? 'https://ccssmartdrive.vercel.app/'
     : 'https://api-smartdrive.ccstiet.com'
 )
