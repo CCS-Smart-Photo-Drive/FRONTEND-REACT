@@ -11,7 +11,7 @@ const FuturisticHome = () => {
 
   const clientId = '679a6500b3cee642388a3e77'; 
   const handleLogin = () => {
-    const authUrl = `https://auth.ccstiet.com/auth/google?clientid=${clientId}&callback=${window.location.href}/verify_login`;
+    const authUrl = `https://auth.ccstiet.com/auth/google?clientid=${clientId}&callback=${window.location.href}verify_login`;
     window.location.href = authUrl;
   };
 
