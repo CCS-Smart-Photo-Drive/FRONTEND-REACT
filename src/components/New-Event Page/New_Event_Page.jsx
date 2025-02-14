@@ -106,7 +106,7 @@ const New_Event_Page = () => {
     try {
       const body = new FormData();
       body.append("event_manager_name", localStorage.getItem("user_name"));
-      const response = await fetch(`${API_URL}/my_events`, {
+      const response = await fetch(`${API_URL(window.location.href)}/my_events`, {
         body,
         method: "POST",
         headers: {
@@ -148,7 +148,7 @@ const New_Event_Page = () => {
       formData.set("date", eventData.date);
       formData.append("file", zipFile, "images.zip");
 
-      const response = await fetch(`${API_URL}/add_new_event`, {
+      const response = await fetch(`${API_URL(window.location.href)}/add_new_event`, {
         method: "POST",
         body: formData,
         headers: {

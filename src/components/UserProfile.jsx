@@ -68,7 +68,7 @@ const ProfilePage = () => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `${API_URL}/my_dashboard`,
+        `${API_URL(window.location.href)}/my_dashboard`,
         {
           method: "POST",
           headers: {
@@ -141,7 +141,7 @@ const ProfilePage = () => {
         throw new Error("Authentication required");
       }
 
-      const response = await fetch(`${API_URL}/update-password`, {
+      const response = await fetch(`${API_URL(window.location.href)}/update-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

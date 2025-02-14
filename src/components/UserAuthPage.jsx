@@ -38,8 +38,8 @@ const UserAuthPage = () => {
       body.append("password", formData.password);
 
       const endpoint = isLogin
-        ? `${API_URL}/login_user`
-        : `${API_URL}/register_user`;
+        ? `${API_URL(window.location.href)}/login_user`
+        : `${API_URL(window.location.href)}/register_user`;
       const response = await fetch(endpoint, {
         method: "POST",
         body

@@ -9,7 +9,7 @@ export function VerifyLogin() {
         const query = new URLSearchParams(location.search);
         const jwtToken = query.get('token');
 
-        const response = await fetch(`${API_URL}/sso_auth`, {
+        const response = await fetch(`${API_URL(window.location.href)}/sso_auth`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${jwtToken}`

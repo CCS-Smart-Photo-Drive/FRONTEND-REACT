@@ -54,7 +54,7 @@ const EventsPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${API_URL}/all_events`)
+    fetch(`${API_URL(window.location.href)}/all_events`)
       .then((response) => response.json())
       .then((data) => {
         setEvents(formatForFrontEnd(data.events));
@@ -73,7 +73,7 @@ const EventsPage = () => {
     try {
       const body = new FormData();
       body.set("user_email", localStorage.getItem("user_email"));
-      const fetchDownloadResponse = await fetch(`${API_URL}/get_photos/${eventName}`, {
+      const fetchDownloadResponse = await fetch(`${API_URL(window.location.href)}/get_photos/${eventName}`, {
         method: "POST",
         body,
         headers: {
@@ -90,7 +90,7 @@ const EventsPage = () => {
       }
 
       const downloadTarget = (await fetchDownloadResponse.json()).download;
-      const response = await fetch(`${API_URL}/get_photos/${eventName}?download=${downloadTarget}`, {
+      const response = await fetch(`${API_URL(window.location.href)}/get_photos/${eventName}?download=${downloadTarget}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

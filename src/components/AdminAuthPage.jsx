@@ -40,8 +40,8 @@ const UserAuthPage = () => {
       console.log(body);
 
       const endpoint = isLogin
-        ? `${API_URL}/login_event_manager`
-        : `${API_URL}/register_event_manager`;
+        ? `${API_URL(window.location.href)}/login_event_manager`
+        : `${API_URL(window.location.href)}/register_event_manager`;
       const response = await fetch(endpoint, {
         method: "POST",
         body

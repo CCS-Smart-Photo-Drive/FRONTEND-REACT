@@ -13,7 +13,7 @@ export const NavbarUser = ({ onLogout }) => {
     localStorage.removeItem("email");
     localStorage.removeItem("profile_picture");
     onLogout();
-    fetch(`${API_URL}/logout`, {
+    fetch(`${API_URL(window.location.href)}/logout`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
