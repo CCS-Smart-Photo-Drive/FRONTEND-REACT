@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { useRef, useEffect, useState } from "react";
-import membersData from "./cores.json";
+// import membersData from "./cores.json";
 
 export default function Footer() {
   const sliderRef = useRef(null);
-  const [members, setMembers] = useState(membersData);
+  // const [members, setMembers] = useState(membersData);
 
   useEffect(() => {
     const slider = sliderRef.current;
@@ -32,7 +32,7 @@ export default function Footer() {
         <p className="text-white text-xl mb-8">
           MADE WITH <span className="text-red-500">❤️</span> BY CCS
         </p>
-        <div
+        {/* <div
           ref={sliderRef}
           className="flex gap-4 overflow-hidden pb-4"
           style={{
@@ -60,7 +60,7 @@ export default function Footer() {
           ) : (
             <p className="text-white">Loading members...</p>
           )}
-        </div>
+        </div> */}
       </div>
     </footer>
   );

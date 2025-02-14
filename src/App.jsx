@@ -26,7 +26,7 @@ const PrivateRoute = ({ children }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         mode: "cors",
-        credentials: "include",
+        
       });
       if (!response.ok) {
         setRender(<Navigate to="/" replace />);
@@ -54,7 +54,7 @@ const AdminRoute = ({ children }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         mode: "cors",
-        credentials: "include",
+        
       });
       if (!response.ok) {
         setRender(<Navigate to="/" replace />);

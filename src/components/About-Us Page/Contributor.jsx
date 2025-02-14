@@ -1,53 +1,40 @@
 import React, { useState, useEffect, useRef } from "react";
 
 export default function Contributor() {
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const videoRefs = useRef([]);
   const creatorRefs = useRef([]);
 
   const creators = [
     {
-      id: "creatorA",
       name: "Prince Sharma",
-      image: "/PRINCE_SHARMA.jpg",
-      description: "blah blah",
+      image: "/Prince.jpg",
+      description: "",
     },
     {
-      id: "creatorB",
-      name: "B",
-      image: "/B.jpg",
-      description: "blah blah",
+      name: "Aargh",
+      image: "/Aargh.jpg",
+      description: "",
     },
     {
-      id: "creatorC",
-      name: "C",
-      image: "/C.jpg",
-      description: "blah blah",
+      name: "Hari",
+      image: "/Hari.jpg",
+      description: "",
     },
     {
-      id: "creatorD",
-      name: "D",
-      image: "/D.jpg",
-      description: "blah blah",
+      name: "Arsh",
+      image: "/Arsh.jpg",
+      description: "",
     },
     {
-      id: "creatorE",
-      name: "E",
-      image: "/E.jpg",
-      description: "blah blah",
+      name: "",
+      image: "/.jpg",
+      description: "",
     },
     {
-      id: "creatorF",
-      name: "New Team Member",
-      image: "/F.jpg",
-      description: "blah blah",
+      name: "",
+      image: "/.jpg",
+      description: "",
     },
   ];
-
-  useEffect(() => {
-    showVideo(currentVideoIndex);
-  }, [currentVideoIndex]);
 
   useEffect(() => {
     const handleScroll = (e) => {
@@ -88,33 +75,6 @@ export default function Contributor() {
     }
   }, []);
 
-  const showVideo = (index) => {
-    videoRefs.current.forEach((video, i) => {
-      if (i === index) {
-        video.classList.add("active");
-      } else {
-        video.classList.remove("active");
-      }
-    });
-  };
-
-  const nextVideo = () => {
-    setCurrentVideoIndex(
-      (prevIndex) => (prevIndex + 1) % videoRefs.current.length
-    );
-  };
-
-  const prevVideo = () => {
-    setCurrentVideoIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + videoRefs.current.length) % videoRefs.current.length
-    );
-  };
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   const handleCreatorHover = (index, isEnter) => {
     creatorRefs.current.forEach((creator, i) => {
       if (i !== index) {
@@ -137,7 +97,7 @@ export default function Contributor() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ">
             {creators.map((creator, index) => (
               <div
-                key={creator.id}
+                key={index}
                 ref={(el) => (creatorRefs.current[index] = el)}
                 className="relative overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105 group bg-gray-800"
                 onMouseEnter={() => handleCreatorHover(index, true)}

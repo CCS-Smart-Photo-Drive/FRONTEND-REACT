@@ -23,7 +23,6 @@ const FuturisticHome = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         mode: "cors",
-        credentials: "include",
       });
       console.log(await response.clone().text())
       if (!response.ok) {

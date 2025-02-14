@@ -80,7 +80,7 @@ const EventsPage = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         mode: "cors",
-        credentials: "include",
+        
       });
 
       if (!fetchDownloadResponse.ok) {
@@ -95,7 +95,7 @@ const EventsPage = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         mode: "cors",
-        credentials: "include",
+        
       });
 
       if (!response.ok) {

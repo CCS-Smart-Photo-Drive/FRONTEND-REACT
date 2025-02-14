@@ -19,7 +19,7 @@ export const NavbarAdmin = ({ onLogout }) => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       mode: "cors",
-      credentials: "include",
+      
     });
     navigate("/");
   };
