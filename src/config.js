@@ -6,3 +6,4 @@ export const API_URL = (domain) => IS_DEV ? 'http://localhost:5000' : (
     ? 'https://ccssmartdrive.vercel.app/'
     : 'https://api-smartdrive.ccstiet.com'
 )
+
