@@ -31,9 +31,9 @@ export const NavbarUser = ({ onLogout }) => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <img
-              src="path-to-your-logo.png" // Replace with the actual path to your logo
+              src="./logo" // Replace with the actual path to your logo
               alt="Creating Computing Society Logo"
-              className="w-8 h-8 object-contain" // Adjust size as needed
+              className="w-20 h-20" // Adjust size as needed
             />
             <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500">
               SmartPhotoDrive
@@ -73,6 +73,7 @@ export const NavbarUser = ({ onLogout }) => {
           </div>
         </div>
       </div>
+      
     </nav>
   );
 };

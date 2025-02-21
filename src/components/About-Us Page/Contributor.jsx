@@ -36,6 +36,24 @@ export default function Contributor() {
     },
   ];
 
+  const mentors = [
+    {
+      name: "Kanav Dhandha",
+      img:"public\sarthak.jpg",
+      description: "",
+    },
+    {
+      name: "Kanav Dhandha2",
+      img:"/Hari.jpg",
+      description: "",
+    },
+    {
+      name: "Kanav Dhandha3",
+      img:"/Hari.jpg",
+      description: "",
+    },
+  ]
+
   useEffect(() => {
     const handleScroll = (e) => {
       e.preventDefault();
@@ -84,7 +102,11 @@ export default function Contributor() {
     });
   };
 
+
+
   return (
+    <div className="">
+
     <section className="py-20 relative z-10 bg-gray-900">
       <div className="container mx-auto px-4">
         <h2 className="text-5xl font-bold text-white text-center z-20 relative mb-8">
@@ -121,5 +143,39 @@ export default function Contributor() {
         </div>
       </div>
     </section>
+    <section className="py-20 relative z-10 bg-gray-900">
+      <div className="container mx-auto px-4">
+        <div className="rounded-lg shadow-2xl p-8">
+          <h1 className="text-3xl font-bold text-white text-center mb-8">
+            Meet Our Mentors
+          </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 ">
+            {mentors.map((mentor, index) => (
+              <div
+                key={index}
+                ref={(el) => (creatorRefs.current[index] = el)}
+                className="relative overflow-hidden rounded-lg shadow-md transition-transform duration-300 hover:scale-105 group bg-gray-800"
+                onMouseEnter={() => handleCreatorHover(index, true)}
+                onMouseLeave={() => handleCreatorHover(index, false)}
+              >
+                <div className="relative pt-[100%] overflow-hidden">
+                  <img
+                    src={mentor.image || "/placeholder.svg"}
+                    alt={mentor.name}
+                    className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-30 lazy"
+                    data-src={mentor.image || "/placeholder.svg"}
+                  />
+                </div>
+                <div className="absolute inset-0 bg-gray-600 bg-opacity-90 text-white p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-y-auto flex flex-col justify-center">
+                  <h2 className="text-xl font-bold mb-2">{mentor.name}</h2>
+                  <p>{mentor.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+    </div>
   );
 }

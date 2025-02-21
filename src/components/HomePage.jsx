@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Camera, Image, Globe } from "lucide-react";
 import { NavbarUser } from "./NavbarUser";
 import { NavbarAdmin } from "./NavbarAdmin";
+
 import { API_URL } from "../config";
 
 const FuturisticHome = () => {
@@ -124,7 +125,7 @@ const FuturisticHome = () => {
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.05 }} className="group relative overflow-hidden rounded-lg shadow-lg">
-              <img src="your-image-2.jpg" alt="Computing Society Event 2" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+              <img src="public\photo1.jpeg" alt="Computing Society Event 2" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
               <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-0 transition-opacity duration-300"></div>
               <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <p className="text-xl font-semibold">Event 2</p>
@@ -144,7 +145,7 @@ const FuturisticHome = () => {
 
       {/* Footer */}
       <footer className="py-8 bg-black text-center text-gray-400">
-        <p>&copy; 2025 SmartPhotoDrive. All rights reserved.</p>
+        <p>&copy; Team CCS. All rights reserved.</p>
       </footer>
     </div>
   );
