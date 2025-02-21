@@ -17,7 +17,7 @@ const FuturisticHome = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`${API_URL}/get_user_status`, {
+      const response = await fetch(`${API_URL(window.location.href)}/get_user_status`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
