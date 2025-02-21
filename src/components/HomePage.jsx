@@ -84,9 +84,9 @@ const FuturisticHome = () => {
         <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
           AI-driven photo retrieval and management, built for seamless experiences.
         </p>
-        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="mt-8 px-12 py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg text-lg font-medium shadow-lg hover:shadow-xl transition duration-300">
+        {/* <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="mt-8 px-12 py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg text-lg font-medium shadow-lg hover:shadow-xl transition duration-300">
           Get Started
-        </motion.button>
+        </motion.button> */}
       </header>
 
       <section id="features" className="py-16 text-center z-10">
@@ -125,7 +125,7 @@ const FuturisticHome = () => {
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.05 }} className="group relative overflow-hidden rounded-lg shadow-lg">
-              <img src="public\photo1.jpeg" alt="Computing Society Event 2" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+              <img src="../photo1.jpeg" alt="Computing Society Event 2" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
               <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-0 transition-opacity duration-300"></div>
               <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <p className="text-xl font-semibold">Event 2</p>
