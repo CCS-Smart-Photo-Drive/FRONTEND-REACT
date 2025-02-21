@@ -63,8 +63,8 @@ function About_Page() {
           </span>
         </motion.div>
         <div className="hidden md:flex space-x-8">
-          <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
-            About Us
+          <motion.a whileHover={{ scale: 1.1 }} href={`/`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
+            Home Page
           </motion.a>
         </div>
         <div className="flex space-x-4">

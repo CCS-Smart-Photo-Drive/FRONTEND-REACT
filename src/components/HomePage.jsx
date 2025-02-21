@@ -58,7 +58,7 @@ const FuturisticHome = () => {
             SmartPhotoDrive
           </span>
         </motion.div>
-        <div className="hidden md:flex space-x-8">
+        <div className="flex space-x-4">
           <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
             About Us
           </motion.a>
@@ -117,10 +117,10 @@ const FuturisticHome = () => {
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <motion.div whileHover={{ scale: 1.05 }} className="group relative overflow-hidden rounded-lg shadow-lg">
-              <img src="your-image-1.jpg" alt="Computing Society Event 1" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+              <img src="../photo4.png" alt="Computing Society Event 1" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
               <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-0 transition-opacity duration-300"></div>
               <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p className="text-xl font-semibold">Event 1</p>
+                <p className="text-xl font-semibold"></p>
               </div>
             </motion.div>
 
@@ -128,15 +128,15 @@ const FuturisticHome = () => {
               <img src="../photo1.jpeg" alt="Computing Society Event 2" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
               <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-0 transition-opacity duration-300"></div>
               <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p className="text-xl font-semibold">Event 2</p>
+                <p className="text-xl font-semibold"></p>
               </div>
             </motion.div>
 
             <motion.div whileHover={{ scale: 1.05 }} className="group relative overflow-hidden rounded-lg shadow-lg">
-              <img src="your-image-3.jpg" alt="Computing Society Event 3" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
+              <img src="../logo.png" alt="Computing Society Event 3" className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
               <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-0 transition-opacity duration-300"></div>
               <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <p className="text-xl font-semibold">Event 3</p>
+                <p className="text-xl font-semibold"></p>
               </div>
             </motion.div>
           </div>
