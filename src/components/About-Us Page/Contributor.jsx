@@ -5,28 +5,28 @@ export default function Contributor() {
 
   const creators = [
     {
+      name: "Jidugu Sriharisesh",
+      image: "/Hari.jpg",
+      description: "",
+    },
+    {
+      name: "Aanchal Jain",
+      image: "/Aanchal.jpg",
+      description: "",
+    },
+    {
+      name: "Aargh Rai",
+      image: "/Aargh.jpg",
+      description: "",
+    },
+    {
       name: "Prince Sharma",
       image: "/Prince.jpg",
       description: "",
     },
     {
-      name: "Aargh",
-      image: "/Aargh.jpg",
-      description: "",
-    },
-    {
-      name: "Hari",
-      image: "/Hari.jpg",
-      description: "",
-    },
-    {
-      name: "Arsh",
-      image: "/Arsh.jpg",
-      description: "",
-    },
-    {
-      name: "",
-      image: "/.jpg",
+      name: "Jai Bhasin",
+      image: "/Jai.jpg",
       description: "",
     },
     {
