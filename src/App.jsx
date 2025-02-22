@@ -20,7 +20,7 @@ const PrivateRoute = ({ children }) => {
   const [render, setRender] = useState(<div>Loading...</div>);
   useEffect(() => {
     (async () => {
-      const response = await fetch(`${API_URL}/get_user_status`, {
+      const response = await fetch(`https://api-smartdrive.ccstiet.com/get_user_status`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -48,7 +48,7 @@ const AdminRoute = ({ children }) => {
   const [render, setRender] = useState(<div>Loading...</div>);
   useEffect(() => {
     (async () => {
-      const response = await fetch(`${API_URL}/get_user_status`, {
+      const response = await fetch(`https://api-smartdrive.ccstiet.com/get_user_status`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
