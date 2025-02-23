@@ -12,7 +12,7 @@ export default function Contributor() {
       { name: "Aargh Rai", image: "/Aargh.jpg", description: "API Integration" },
       { name: "Prince Sharma", image: "/Prince.jpg", description: "Frontend Developer" },
       { name: "Jai Bhasin", image: "/Jai.jpg", description: "Backend Developer" },
-      { name: "Yuvraj Singh", image: "/yuvraj.png", description: "Backend Developer" },
+      { name: "Yuvraj Chawla", image: "/yuvraj.png", description: "Backend Developer" },
     ],
     mentors: [
       { name: "Kanav Dhanda", image: "/kanav.jpeg", description: "" },
