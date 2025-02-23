@@ -6,8 +6,8 @@ import "../../index.css";
 
 export default function Profile_Page() {
   const [userData, setUserData] = useState({
-    name: "Niggas",
-    email: "niggas@thapar.edu.com",
+    name: "y",
+    email: "y@thapar.edu.com",
     phone: "+91 NNNNNNNNNN",
     image: "/placeholder.svg?height=300&width=300",
   });
