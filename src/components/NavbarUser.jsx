@@ -31,7 +31,7 @@ export const NavbarUser = ({ onLogout }) => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <img
-              src="./logo" // Replace with the actual path to your logo
+              src="../logo.png" // Replace with the actual path to your logo
               alt="Creating Computing Society Logo"
               className="w-20 h-20" // Adjust size as needed
             />
