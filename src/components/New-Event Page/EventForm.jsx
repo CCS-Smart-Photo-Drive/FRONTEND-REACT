@@ -18,14 +18,27 @@ const EventForm = ({ onSubmit, onClose }) => {
     setEventData({ ...eventData, [name]: value });
   };
 
-  const handleFileUpload = (files) => {
+  const handleFileUpload = async (files) => {
     const imageFiles = [];
     let zipFile = null;
     let zipFileName = "";
   
-    Array.from(files).forEach((file) => {
+    // Array.from(files).forEach((file) => {
+    //   if (file.type === "application/zip") {
+    //     // zipFile = new Blob([file], { type: "application/zip" }); // Convert to Blob
+    //     zipFile= await file.arrayBuffer(); ;
+    //     zipFileName = file.name;
+    //   } else if (file.type.startsWith("image/")) {
+    //     imageFiles.push({
+    //       file,
+    //       preview: URL.createObjectURL(file),
+    //       name: file.name,
+    //     });
+    //   }
+    // });
+    for (const file of files) {
       if (file.type === "application/zip") {
-        zipFile = new Blob([file], { type: "application/zip" }); // Convert to Blob
+        zipFile = file; // Keep the file as a File object instead of converting it to an ArrayBuffer
         zipFileName = file.name;
       } else if (file.type.startsWith("image/")) {
         imageFiles.push({
@@ -34,7 +47,8 @@ const EventForm = ({ onSubmit, onClose }) => {
           name: file.name,
         });
       }
-    });
+    }
+    
   
     setEventData((prevState) => ({
       ...prevState,
@@ -88,6 +102,78 @@ const EventForm = ({ onSubmit, onClose }) => {
       <div className="bg-black p-8 rounded-xl shadow-xl w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-white">Add New Event</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Name of Event
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white p-2"
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Description of event
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows="3"
+              required
+              className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white p-2"
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="organizedBy"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Organised by
+            </label>
+            <input
+              type="text"
+              id="organizedBy"
+              name="organizedBy"
+              required
+              className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white p-2"
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="date"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Date of event
+            </label>
+            <div className="mt-1 relative rounded-md shadow-sm">
+              <input
+                type="date"
+                id="date"
+                name="date"
+                required
+                className="block w-full rounded-md bg-gray-800 border-gray-700 text-white pl-10 p-2"
+                onChange={handleChange}
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <CalendarIcon
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-300">Upload Files</label>
             <div
