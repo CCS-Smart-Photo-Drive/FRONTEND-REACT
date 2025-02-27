@@ -77,6 +77,41 @@ const EventsPage = () => {
       setDownloadLoading(null);
     }
   };
+  const handleAllDownloads = async (eventName) => {
+    // setDownloadLoading(eventName);
+    // setDownloadError((prev) => ({ ...prev, [eventName]: "" }));
+
+    try {
+      // const body = new FormData();
+      // body.set("user_email", localStorage.getItem("user_email"));
+
+      // const fetchImagesResponse = await fetch(
+      //   `${API_URL(window.location.href)}/get_photos/${eventName}`,
+      //   {
+      //     method: "POST",
+      //     body,
+      //     headers: {
+      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+      //       Accept: "application/json",
+      //     },
+      //   }
+      // );
+
+      // if (!fetchImagesResponse.ok) {
+      //   throw new Error("NO IMAGES FOUND");
+      // }
+
+      // const { image_urls } = await fetchImagesResponse.json();
+      // if (!image_urls.length) throw new Error("NO IMAGES FOUND");
+
+      navigate("/showAllImages");
+    } catch (err) {
+      console.error(err);
+      setDownloadError((prev) => ({ ...prev, [eventName]: "NO IMAGES FOUND" }));
+    } finally {
+      setDownloadLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white pt-24 px-4 pb-8">
@@ -146,6 +181,14 @@ const EventsPage = () => {
                   className={`w-full py-2 px-4 mt-4 rounded-md transition-colors duration-200 focus:outline-none ${downloadLoading === event.name ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"}`}
                 >
                   {downloadLoading === event.name ? "Fetching Images..." : "Get Images"}
+                  <Download className="w-5 h-5 ml-2 inline" />
+                </button>
+                <button
+                  onClick={() => handleAllDownloads()}
+                  // disabled={downloadLoading === event.name}
+                  className={`w-full py-2 px-4 mt-4 rounded-md transition-colors duration-200 focus:outline-none ${downloadLoading === event.name ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"}`}
+                >
+                  {downloadLoading === event.name ? "Fetching Images..." : "Get All Event Images"}
                   <Download className="w-5 h-5 ml-2 inline" />
                 </button>
                 {downloadError[event.name] && (

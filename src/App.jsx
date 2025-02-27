@@ -16,6 +16,7 @@ import { VerifyLogin } from "./components/VerifyLogin";
 import UserAuthPage from "./components/UserAuthPage";
 import AdminAuthPage from "./components/AdminAuthPage";
 import ShowImages from "./components/ShowImages";
+import ShowAllImages from "./components/showAllImages";
 
 const PrivateRoute = ({ children }) => {
   const [render, setRender] = useState(<div>Loading...</div>);
@@ -109,6 +110,14 @@ const App = () => {
           element={
             <PrivateRoute>
             <ShowImages />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/showAllImages"
+          element={
+            <PrivateRoute>
+            <ShowAllImages />
             </PrivateRoute>
           }
         />
