@@ -183,7 +183,7 @@ const ProfilePage = () => {
         {/* Profile Header */}
         <div className="text-center">
           <h1 className="text-4xl font-bold text-teal-500">User Profile</h1>
-          <p className="text-gray-400 mt-2">Manage your profile and settings</p>
+          <p className="text-gray-400 mt-2">MUST UPLOAD PROFILE IMAGE</p>
         </div>
 
         {/* Profile Picture Section */}
@@ -232,7 +232,7 @@ const ProfilePage = () => {
           </div>
 
           <p className="mt-2 text-sm text-gray-400">
-            Click or drag and drop to update profile picture
+            IMAGE MUST BE CLEAR. IMAGE MUST CONTAIN YOUR FACE FRONT PROFILE.
           </p>
         </div>
 

@@ -107,6 +107,7 @@ function formatForFrontEnd(data) {
       const { image_urls } = await fetchImagesResponse.json();
       setImage_urls(image_urls);
       console.log(image_urls)
+      goToImagesPage(image_urls)
       if (!image_urls.length) throw new Error("No images found for this event.");
 
       // Download images and zip them
@@ -157,7 +158,7 @@ function formatForFrontEnd(data) {
     }
   };
 
-  const goToImagesPage = (imageUrls) => {
+const goToImagesPage = (imageUrls) => {
     navigate("/showImages", { state: { imageUrls } });
 };
 
@@ -231,12 +232,12 @@ function formatForFrontEnd(data) {
       </div>
         {/* <div className="w-1000" id="imageContainer"></div> */}
         {/* {console.log(image_urls)} */}
-        <button
+        {/* <button
         onClick={() => goToImagesPage(image_urls)}
         className="px-4 py-2 bg-blue-500 text-white rounded-lg"
       >
         View Images
-      </button>
+      </button> */}
     </div>
   );
 };
