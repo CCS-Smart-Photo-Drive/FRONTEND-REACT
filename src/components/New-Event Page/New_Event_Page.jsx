@@ -979,169 +979,12 @@ const New_Event_Page = () => {
 //     }
 // };
 
-// const addTask = async (eventData) => {
-//   const uploadManager = new UploadManager();
-//   let uploadTracker = null;
-//   let abortController = new AbortController();
-  
-//   try {
-//       startUpload(() => {
-//           abortController.abort();
-//           uploadTracker?.clearAllTimeouts();
-//           uploadManager.cancelUpload();
-//       });
 
-//       // Prepare the file
-//       let zipBlob;
-//       let totalSize;
-
-//       if (!eventData.zipFile) {
-//           if (eventData.images.length === 0) {
-//               throw new Error("Images are required");
-//           }
-//           validateImages(eventData.images.map(img => img.file));
-//           zipBlob = await zipImages(eventData.images.map(img => img.file), updateProgress);
-//           totalSize = zipBlob.size;
-//       } else {
-//           zipBlob = eventData.zipFile.blob;
-//           totalSize = zipBlob.size;
-//           updateProgress(40, 'File prepared');
-//       }
-
-//       const totalChunks = Math.ceil(totalSize / CHUNK_SIZE);
-
-//       console.log({
-//           fileName: eventData.zipFile?.name || 'images.zip',
-//           eventName: eventData.name,
-//           organizedBy: eventData.organizedBy,
-//           description: eventData.description,
-//           eventManagerName: localStorage.getItem("user_name"),
-//           eventManagerEmail: localStorage.getItem("email"),
-//           date: eventData.date,
-//           totalSize: totalSize,
-//           totalChunks: totalChunks
-//       });
-
-//       // **Step 1: Initialize Upload**
-//       const initResponse = await fetch(`${API_URL(window.location.href)}/init_upload`, {
-//           method: 'POST',
-//           headers: {
-//               'Content-Type': 'application/json',
-//               'Authorization': `Bearer ${localStorage.getItem("token")}`
-//           },
-//           body: JSON.stringify({
-//               fileName: eventData.zipFile?.name || 'images.zip',
-//               eventName: eventData.name,
-//               organizedBy: eventData.organizedBy,
-//               description: eventData.description,
-//               eventManagerName: localStorage.getItem("user_name"),
-//               eventManagerEmail: localStorage.getItem("email"),
-//               date: eventData.date,
-//               totalSize: totalSize,
-//               totalChunks: totalChunks
-//           }),
-//           signal: abortController.signal
-//       });
-
-//       if (!initResponse.ok) {
-//           const errorData = await initResponse.json();
-//           throw new Error(errorData.error || `Failed to initialize upload: ${initResponse.statusText}`);
-//       }
-
-//       const { fileId } = await initResponse.json();
-//       uploadTracker = new ChunkUploadTracker(totalChunks);
-
-//       // **Step 2: Upload Chunks**
-//       const uploadChunk = async (chunkIndex) => {
-//           while (!abortController.signal.aborted) {
-//               try {
-//                   const start = chunkIndex * CHUNK_SIZE;
-//                   const end = Math.min(start + CHUNK_SIZE, zipBlob.size);
-//                   const chunk = zipBlob.slice(start, end);
-
-//                   const response = await fetch(`${API_URL(window.location.href)}/upload_chunk/${fileId}`, {
-//                       method: 'POST',
-//                       headers: {
-//                           'X-Chunk-Index': chunkIndex,
-//                           'Authorization': `Bearer ${localStorage.getItem("token")}`
-//                       },
-//                       body: chunk,
-//                       signal: abortController.signal
-//                   });
-
-//                   if (!response.ok) {
-//                       throw new Error(`Chunk upload failed: ${response.statusText}`);
-//                   }
-
-//                   uploadTracker.markSuccess(chunkIndex);
-//                   updateProgress(
-//                       40 + (uploadTracker.getProgress() * 0.6),
-//                       `Uploading: ${uploadTracker.uploadedChunks.size}/${totalChunks} chunks`
-//                   );
-
-//                   return; // Success - exit the retry loop
-
-//               } catch (error) {
-//                   if (abortController.signal.aborted) {
-//                       throw new Error('Upload cancelled');
-//                   }
-
-//                   uploadTracker.markFailure(chunkIndex);
-//                   const retryCount = uploadTracker.getRetryCount(chunkIndex);
-//                   const retryDelay = uploadTracker.getRetryDelay(retryCount);
-                  
-//                   updateProgress(
-//                       40 + (uploadTracker.getProgress() * 0.6),
-//                       `Retrying chunk ${chunkIndex} (Attempt ${retryCount + 1})`
-//                   );
-
-//                   await new Promise(resolve => {
-//                       const timeoutId = setTimeout(resolve, retryDelay);
-//                       uploadTracker.setRetryTimeout(chunkIndex, timeoutId);
-//                   });
-
-//                   continue;
-//               }
-//           }
-//       };
-
-//       // Upload all chunks
-//       const uploadPromises = Array.from({ length: totalChunks }).map((_, i) => uploadChunk(i));
-//       await Promise.all(uploadPromises);
-
-//       // **Step 3: Finalize Upload**
-//       const completeResponse = await fetch(`${API_URL(window.location.href)}/complete_upload/${fileId}`, {
-//           method: 'POST',
-//           headers: {
-//               'Authorization': `Bearer ${localStorage.getItem("token")}`
-//           }
-//       });
-
-//       if (!completeResponse.ok) {
-//           throw new Error(`Finalizing upload failed: ${completeResponse.statusText}`);
-//       }
-
-//       const newTask = convertEventDataToTask(eventData, tasks.length);
-//       setTasks(prev => [...prev, newTask]);
-//       updateProgress(100, 'Upload complete!');
-      
-//       return { message: 'Upload completed successfully' };
-
-//   } catch (error) {
-//       console.error("Error adding event:", error);
-//       setError(error.message);
-//       uploadTracker?.clearAllTimeouts();
-//       uploadManager.cancelUpload();
-//       throw error;
-//   } finally {
-//       setTimeout(resetUpload, 2000);
-//   }
-// };
 const addTask = async (eventData) => {
   const uploadManager = new UploadManager();
   let uploadTracker = null;
   let abortController = new AbortController();
-
+  
   try {
       startUpload(() => {
           abortController.abort();
@@ -1149,6 +992,7 @@ const addTask = async (eventData) => {
           uploadManager.cancelUpload();
       });
 
+      // Prepare the file
       let zipBlob;
       let totalSize;
 
@@ -1167,7 +1011,19 @@ const addTask = async (eventData) => {
 
       const totalChunks = Math.ceil(totalSize / CHUNK_SIZE);
 
-      // **Initialize Upload**
+      console.log({
+          fileName: eventData.zipFile?.name || 'images.zip',
+          eventName: eventData.name,
+          organizedBy: eventData.organizedBy,
+          description: eventData.description,
+          eventManagerName: localStorage.getItem("user_name"),
+          eventManagerEmail: localStorage.getItem("email"),
+          date: eventData.date,
+          totalSize: totalSize,
+          totalChunks: totalChunks
+      });
+
+      // Initialize upload with correct totalChunks value
       const initResponse = await fetch(`${API_URL(window.location.href)}/init_upload`, {
           method: 'POST',
           headers: {
@@ -1182,64 +1038,124 @@ const addTask = async (eventData) => {
               eventManagerName: localStorage.getItem("user_name"),
               eventManagerEmail: localStorage.getItem("email"),
               date: eventData.date,
-              totalSize,
-              totalChunks
+              totalSize: totalSize,
+              totalChunks: totalChunks
           }),
           signal: abortController.signal
       });
 
       if (!initResponse.ok) {
           const errorData = await initResponse.json();
-          throw new Error(errorData.error || `Failed to initialize upload`);
+          throw new Error(errorData.error || `Failed to initialize upload: ${initResponse.statusText}`);
       }
 
       const { fileId } = await initResponse.json();
       uploadTracker = new ChunkUploadTracker(totalChunks);
 
-      // **Upload Chunks**
       const uploadChunk = async (chunkIndex) => {
-          const start = chunkIndex * CHUNK_SIZE;
-          const end = Math.min(start + CHUNK_SIZE, zipBlob.size);
-          const chunk = zipBlob.slice(start, end);
+          while (!abortController.signal.aborted) {
+              try {
+                  const start = chunkIndex * CHUNK_SIZE;
+                  const end = Math.min(start + CHUNK_SIZE, zipBlob.size);
+                  const chunk = zipBlob.slice(start, end);
 
-          const response = await fetch(`${API_URL(window.location.href)}/upload_chunk/${fileId}`, {
-              method: 'POST',
-              headers: {
-                  'X-Chunk-Index': chunkIndex,
-                  'Authorization': `Bearer ${localStorage.getItem("token")}`
-              },
-              body: chunk,
-              signal: abortController.signal
-          });
+                  const response = await fetch(`${API_URL(window.location.href)}/upload_chunk/${fileId}`, {
+                      method: 'POST',
+                      headers: {
+                          'X-Chunk-Index': chunkIndex,
+                          'Authorization': `Bearer ${localStorage.getItem("token")}`
+                      },
+                      body: chunk,
+                      signal: abortController.signal
+                  });
 
-          if (!response.ok) {
-              throw new Error(`Chunk ${chunkIndex} upload failed`);
+                  if (!response.ok) {
+                      throw new Error(`Chunk upload failed: ${response.statusText}`);
+                  }
+
+                  const responseData = await response.json();
+                  uploadTracker.markSuccess(chunkIndex);
+                  updateProgress(
+                      40 + (uploadTracker.getProgress() * 0.4), // Adjust to 40% for upload completion
+                      `Uploading: ${uploadTracker.uploadedChunks.size}/${totalChunks} chunks (Retries: ${uploadTracker.getRetryCount(chunkIndex)})`
+                  );
+
+                  return; // Success - exit the retry loop
+
+              } catch (error) {
+                  if (abortController.signal.aborted) {
+                      throw new Error('Upload cancelled');
+                  }
+
+                  uploadTracker.markFailure(chunkIndex);
+                  const retryCount = uploadTracker.getRetryCount(chunkIndex);
+                  const retryDelay = uploadTracker.getRetryDelay(retryCount);
+                  
+                  updateProgress(
+                      40 + (uploadTracker.getProgress() * 0.4),
+                      `Retrying chunk ${chunkIndex} (Attempt ${retryCount + 1})`
+                  );
+
+                  await new Promise(resolve => {
+                      const timeoutId = setTimeout(resolve, retryDelay);
+                      uploadTracker.setRetryTimeout(chunkIndex, timeoutId);
+                  });
+                  
+                  continue;
+              }
           }
-
-          uploadTracker.markSuccess(chunkIndex);
-          updateProgress(40 + (uploadTracker.getProgress() * 0.6),
-              `Uploading: ${uploadTracker.uploadedChunks.size}/${totalChunks} chunks`);
       };
 
-      await Promise.all(Array.from({ length: totalChunks }, (_, i) => uploadChunk(i)));
+      // Upload all chunks with infinite retry
+      const uploadPromises = Array.from({ length: totalChunks }).map((_, i) => uploadChunk(i));
+      await Promise.all(uploadPromises);
 
-      // **Finalize Upload**
-      const completeResponse = await fetch(`${API_URL(window.location.href)}/finalize_upload/${fileId}`, {
+      // Verify completion
+      if (!uploadTracker.isComplete()) {
+          const pendingChunks = uploadTracker.getPendingChunks();
+          throw new Error(`Upload incomplete. Missing chunks: ${pendingChunks.join(', ')}`);
+      }
+
+      // Verify the upload with the server
+      updateProgress(80, 'Verifying upload...');
+      
+      const verifyResponse = await fetch(`${API_URL(window.location.href)}/verify_upload/${fileId}`, {
           method: 'POST',
           headers: {
               'Authorization': `Bearer ${localStorage.getItem("token")}`
-          }
+          },
+          signal: abortController.signal
       });
-
-      if (!completeResponse.ok) {
-          throw new Error(`Finalizing upload failed`);
+      
+      if (!verifyResponse.ok) {
+          const errorData = await verifyResponse.json();
+          throw new Error(errorData.error || `Failed to verify upload: ${verifyResponse.statusText}`);
       }
+      
+      // Start processing
+      updateProgress(90, 'Starting processing...');
+      
+      const processResponse = await fetch(`${API_URL(window.location.href)}/process_upload/${fileId}`, {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem("token")}`
+          },
+          signal: abortController.signal
+      });
+      
+      if (!processResponse.ok) {
+          const errorData = await processResponse.json();
+          throw new Error(errorData.error || `Failed to start processing: ${processResponse.statusText}`);
+      }
+      
+      const processData = await processResponse.json();
+      console.log('Processing started:', processData);
 
       const newTask = convertEventDataToTask(eventData, tasks.length);
       setTasks(prev => [...prev, newTask]);
-      updateProgress(100, 'Upload complete!');
-
-      return { message: 'Upload completed successfully' };
+      updateProgress(100, 'Upload complete and processing started!');
+      
+      return { message: 'Upload completed and processing started' };
 
   } catch (error) {
       console.error("Error adding event:", error);
@@ -1251,7 +1167,6 @@ const addTask = async (eventData) => {
       setTimeout(resetUpload, 2000);
   }
 };
-
 
   const removeTask = async (id) => {
     try {
