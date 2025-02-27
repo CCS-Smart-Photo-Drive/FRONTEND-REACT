@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Calendar, User } from "lucide-react";
-import { motion } from "framer-motion";
+import { LogOut, Calendar, User, Menu, X, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { API_URL } from "../config";
 
 export const NavbarUser = ({ onLogout }) => {
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -19,7 +20,6 @@ export const NavbarUser = ({ onLogout }) => {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       mode: "cors",
-      
     });
     navigate("/");
   };
@@ -31,27 +31,25 @@ export const NavbarUser = ({ onLogout }) => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <img
-              src="../logo.png" // Replace with the actual path to your logo
+              src="../logo.png"
               alt="Creating Computing Society Logo"
-              className="w-20 h-20" // Adjust size as needed
+              className="w-12 h-12"
             />
-            <a 
-              href="https://smartdrive.ccstiet.com" 
-              target="_blank" 
+            <a
+              href="https://smartdrive.ccstiet.com"
+              target="_blank"
               rel="noopener noreferrer"
-              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline flex items-center gap-2"
+              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
             >
               SmartPhotoDrive <span className="text-sm font-medium text-gray-300">(Beta)</span>
             </a>
           </div>
 
-          {/* Navigation Links */}
-          <div className="flex items-center space-x-6">
-          <div className="hidden md:flex space-x-8">
-          <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">
-            About Us
-          </motion.a>
-        </div>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
+            <motion.a whileHover={{ scale: 1.1 }} href="/about-us" className="text-gray-300 hover:text-white transition duration-200 font-medium">
+              About Us
+            </motion.a>
             <button
               onClick={() => navigate("/events")}
               className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 rounded-md"
@@ -59,7 +57,6 @@ export const NavbarUser = ({ onLogout }) => {
               <Calendar className="w-5 h-5 mr-2" />
               Events
             </button>
-
             <button
               onClick={() => navigate("/profile")}
               className="flex items-center px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition duration-150 rounded-md"
@@ -67,7 +64,6 @@ export const NavbarUser = ({ onLogout }) => {
               <User className="w-5 h-5 mr-2" />
               Profile
             </button>
-
             <button
               onClick={handleLogout}
               className="flex items-center px-3 py-2 text-red-400 hover:text-white hover:bg-red-600 transition duration-150 rounded-md"
@@ -76,9 +72,42 @@ export const NavbarUser = ({ onLogout }) => {
               Logout
             </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 focus:outline-none">
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
-      
+
+      {/* Mobile Dropdown Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-black bg-opacity-90 py-4 px-6"
+          >
+            <div className="flex flex-col space-y-4">
+              <button onClick={() => navigate("/about")} className="text-gray-300 hover:text-white transition duration-200 flex items-center">
+                <Info className="w-5 h-5 mr-2" /> About Us
+              </button>
+              <button onClick={() => navigate("/events")} className="text-gray-300 hover:text-white transition duration-200 flex items-center">
+                <Calendar className="w-5 h-5 mr-2" /> Events
+              </button>
+              <button onClick={() => navigate("/profile")} className="text-gray-300 hover:text-white transition duration-200 flex items-center">
+                <User className="w-5 h-5 mr-2" /> Profile
+              </button>
+              <button onClick={handleLogout} className="text-red-400 hover:text-white transition duration-200 flex items-center">
+                <LogOut className="w-5 h-5 mr-2" /> Logout
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
