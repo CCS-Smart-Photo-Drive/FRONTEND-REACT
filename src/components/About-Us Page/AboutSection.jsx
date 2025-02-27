@@ -16,7 +16,7 @@ import React from "react";
 
 export default function AboutSection() {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-900">
+    <section className="min-h-[70vh] flex items-center justify-center bg-gray-900">
       <div className="container mx-auto px-6 text-center">
         <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600 mb-6">
           ABOUT US
