@@ -109,7 +109,7 @@ const EventsPage = () => {
 
       await Promise.all(
         image_urls.map(async (url, index) => {
-          const response = await fetch(url);
+          const response = await fetch(url, {mode: "no-cors"});
           if (!response.ok) throw new Error(`Failed to download image: ${url}`);
           const blob = await response.blob();
           imgFolder.file(`image-${index + 1}.jpg`, blob);
