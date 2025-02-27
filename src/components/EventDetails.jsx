@@ -91,12 +91,14 @@ const EventsPage = () => {
           EVENTS
         </motion.h1>
         <div className="bg-gray-900 text-white p-6 rounded-lg border border-gray-700 shadow-lg">
-          <h2 className="text-2xl font-bold text-blue-400 mb-2">Instructions for Uploading Profile Photo</h2>
+          <h2 className="text-2xl font-bold text-blue-400 mb-2">How to Download Your Event Photos</h2>
           <ul className="list-disc list-inside text-gray-300 space-y-1">
-            <li>The Profile Photo Should Contain A Clear Photo Of Your Face.</li>
-            <li>Front Profile Only.</li>
-            <li>The Image Should Be a Solo Photo Of You.</li>
-            <li>The dimensions of the Image Shouldnt Be Too Small. It Wont Be Accepted </li>
+            <li>
+              First Go To <a href="https://smartdrive.ccstiet.com/profile" className="text-blue-400 hover:underline">Profile</a> Page, And Upload Your Profile Photo as Per The Instructions Over There.
+            </li>
+            <li>Find the event from which you want to download images.</li>
+            <li>Click the GET IMAGES button on the event card.</li>
+            <li>You can preview the images there. And Download The Desired Images</li>
             <li>If you face any issues, check your internet connection and retry.</li>
           </ul>
         </div>
