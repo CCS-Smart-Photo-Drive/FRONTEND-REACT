@@ -108,10 +108,10 @@ const FuturisticHome = () => {
       {navbar}
       <header className="relative pt-40 pb-24 text-center z-10">
         <motion.h1 initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }} className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600">
-          Capture. Organize. Share.
+          Snap. Sort. Share.
         </motion.h1>
         <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
-          AI-driven photo retrieval and management, built for seamless experiences.
+          AI-Based, Smart Photo Drive. For Retrieving Personalized Memories.
         </p>
         {/* <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="mt-8 px-12 py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg text-lg font-medium shadow-lg hover:shadow-xl transition duration-300">
           Get Started
@@ -125,9 +125,9 @@ const FuturisticHome = () => {
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[ 
-              { icon: Camera, title: "Capture", description: "Upload event photos seamlessly." },
-              { icon: Image, title: "Organize", description: "AI-powered matching for instant retrieval." },
-              { icon: Globe, title: "Share", description: "Download and share your memories." }
+              { icon: Camera, title: "Capture", description: "Upload Images of Your Events Here." },
+              { icon: Image, title: "Organize", description: "Smart Personalized Photo Retrieval" },
+              { icon: Globe, title: "Share", description: "Download Your Photos and Share It to your Loved Once." }
             ].map((item, idx) => (
               <motion.div key={idx} whileHover={{ scale: 1.05 }} className="bg-gradient-to-r from-teal-600 to-cyan-500 p-10 rounded-lg shadow-xl hover:shadow-2xl">
                 <h3 className="text-2xl font-semibold text-white mb-4">{item.title}</h3>
