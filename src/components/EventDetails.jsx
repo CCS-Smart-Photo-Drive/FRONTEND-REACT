@@ -188,7 +188,7 @@ const EventsPage = () => {
                   // disabled={downloadLoading === event.name}
                   className={`w-full py-2 px-4 mt-4 rounded-md transition-colors duration-200 focus:outline-none ${downloadLoading === event.name ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"}`}
                 >
-                  {downloadLoading === event.name ? "Fetching Images..." : "Get All Event Images"}
+                  {"Get All Event Images"}
                   <Download className="w-5 h-5 ml-2 inline" />
                 </button>
                 {downloadError[event.name] && (

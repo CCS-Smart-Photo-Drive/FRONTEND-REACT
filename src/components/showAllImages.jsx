@@ -170,7 +170,7 @@ const ShowAllImages = () => {
       {navbar}
       <div className="max-w-7xl mx-auto px-4 py-16 pt-24">
         <div className="flex justify-between items-center mb-8 mt-2">
-          <h1 className="text-4xl font-bold">Photo Gallery</h1>
+          <h1 className="text-4xl font-bold">HackTU 6.0 Photo Gallery</h1>
 
           {visibleImages.length > 0 && (
             <button
