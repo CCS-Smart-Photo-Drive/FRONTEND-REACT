@@ -33,7 +33,7 @@ export default function Contributor() {
   };
 
   return (
-    <div className="bg-gray-900 text-white py-20 px-4 container mx-auto">
+    <div className="bg-gray-900 text-white py-20 px-4 container mx-auto min-w-full">
       <h1 className="text-6xl font-bold text-center mb-12">CONTRIBUTORS</h1>
       {Object.entries(contributors).map(([role, people]) => (
         <section key={role} className="mb-16">
