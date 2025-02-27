@@ -235,8 +235,19 @@ const ProfilePage = () => {
             IMAGE MUST BE CLEAR. IMAGE MUST CONTAIN YOUR FACE FRONT PROFILE.
           </p>
         </div>
+        <div className="bg-gray-900 text-white p-6 rounded-lg border border-gray-700 shadow-lg">
+          <h2 className="text-2xl font-bold text-blue-400 mb-2">Instructions for Uploading Profile Photo</h2>
+          <ul className="list-disc list-inside text-gray-300 space-y-1">
+            <li>Please upload a clear photo where your face is fully visible.</li>
+            <li>Ensure the photo is a front-facing profile.</li>
+            <li>The image should be a solo picture of you, without any other individuals.</li>
+            <li>Wait for The Image To Process. It is to provide you with best results.</li>
+            <li>Kindly make sure the image is of sufficient size; very small images cannot be accepted.</li>
+            <li>If you encounter any issues, please check your internet connection and try again.</li>
+          </ul>
+        </div>
 
-        {/* Password Update Section */}
+        {/* Password Update Section
         <div className="border-t border-gray-700 pt-6">
           <button
             onClick={() => {
@@ -326,7 +337,7 @@ const ProfilePage = () => {
               </div>
             </form>
           )}
-        </div>
+        </div> */}
 
         {/* Success Message */}
         {success && (

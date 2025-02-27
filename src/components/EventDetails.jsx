@@ -1,72 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Search, CalendarDays, MapPin, X, Download, User } from "lucide-react";
+import { Search, CalendarDays, MapPin, Download, User } from "lucide-react";
 import NavbarUser from "./NavbarUser";
 import { motion } from "framer-motion";
 import { API_URL } from "../config";
-import JSZip from "jszip";
 import { useNavigate } from "react-router-dom";
 
-
 function formatForFrontEnd(data) {
-  /*
-  {
-    "_id": "6799e8e57be6aff4f018302b",
-    "date": "12",
-    "description": "yoyo",
-    "event_manager_name": "hari22",
-    "event_name": "yoyo1234",
-    "location": "Thapar",
-    "organized_by": "hehe",
-    }
-    
-    to
-    
-    {
-      "id": 1,
-      "name": "Tech Conference 2024",
-      "description": "Join us for the biggest tech conference of the year featuring leading experts in AI, Web Development, and Cloud Computing.",
-      "date": "2024-03-15T09:00:00Z",
-      "location": "San Francisco Convention Center",
-      }
-      ];
-      */
-     return data.map((event) => ({
-       id: event._id,
-       name: event.event_name,
-       description: event.description,
-       date: event.date,
-       location: event.location,
-       organized_by: event.organized_by,
-      }));
-    }
-    
-    const EventsPage = () => {
-      if (localStorage.getItem("token") === null) {
-        return <Navigate to="/login" replace />;
-      }
-      
-      const [events, setEvents] = useState([]);
-      const [searchQuery, setSearchQuery] = useState("");
-      const [loading, setLoading] = useState(true);
-      const [selectedEvent, setSelectedEvent] = useState(null);
-      const [downloadLoading, setDownloadLoading] = useState(false);
-      const [downloadError, setDownloadError] = useState("");
-      const [image_urls , setImage_urls] = useState("")
-      
-      const navigate = useNavigate();
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch(`${API_URL(window.location.href)}/all_events`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setEvents(data.events);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error("Failed to fetch events", err);
-  //       setLoading(false);
-  //     });
-  // }, []);
+  return data.map((event) => ({
+    id: event._id,
+    name: event.event_name,
+    description: event.description,
+    date: event.date,
+    location: event.location,
+    organized_by: event.organized_by,
+  }));
+}
+
+const EventsPage = () => {
+  if (localStorage.getItem("token") === null) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const [events, setEvents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [downloadLoading, setDownloadLoading] = useState(null);
+  const [downloadError, setDownloadError] = useState({});
+  const navigate = useNavigate();
+
   useEffect(() => {
     setLoading(true);
     fetch(`${API_URL(window.location.href)}/all_events`)
@@ -74,94 +35,48 @@ function formatForFrontEnd(data) {
       .then((data) => {
         setEvents(formatForFrontEnd(data.events));
         setLoading(false);
-        // console.log(data.events);
       })
       .catch((err) => {
         console.error("Failed to fetch events", err);
         setLoading(false);
-    })
-  }, [])
+      });
+  }, []);
 
   const handleDownloadImages = async (eventName) => {
-    setDownloadLoading(true);
-    setDownloadError("");
+    setDownloadLoading(eventName);
+    setDownloadError((prev) => ({ ...prev, [eventName]: "" }));
 
     try {
       const body = new FormData();
       body.set("user_email", localStorage.getItem("user_email"));
 
-      const fetchImagesResponse = await fetch(`${API_URL(window.location.href)}/get_photos/${eventName}`, {
-        method: "POST",
-        body,
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
-            "Accept": "application/json",
-        },
-    });
+      const fetchImagesResponse = await fetch(
+        `${API_URL(window.location.href)}/get_photos/${eventName}`,
+        {
+          method: "POST",
+          body,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Accept: "application/json",
+          },
+        }
+      );
 
       if (!fetchImagesResponse.ok) {
-        const data = await fetchImagesResponse.json();
-        throw new Error(data.error);
+        throw new Error("NO IMAGES FOUND");
       }
 
       const { image_urls } = await fetchImagesResponse.json();
-      setImage_urls(image_urls);
-      console.log(image_urls)
-      goToImagesPage(image_urls)
-      if (!image_urls.length) throw new Error("No images found for this event.");
+      if (!image_urls.length) throw new Error("NO IMAGES FOUND");
 
-      // Download images and zip them
-      const zip = new JSZip();
-      const imgFolder = zip.folder(eventName);
-
-      const container = document.getElementById("imageContainer"); // Make sure you have a div with this ID in your HTML
-
-// Promise.all(
-//   image_urls.map(async (url) => {
-//     const img = document.createElement("img"); // Create an image element
-//     img.src = url; // Set image source
-//     img.alt = "Loaded Image";
-//     img.style.width = "1000px"; // Set size if needed
-//     img.style.margin = "10px";
-//     container.appendChild(img); // Append image to the container
-//   })
-// );
-
-
-      // await Promise.all(
-      //   image_urls.map(async (url, index) => {
-      //     // const response = await fetch(url , {mode:"no-cors"});
-
-      //     // console.log(response)
-      //     // if (!response.ok) throw new Error(`Failed to download image: ${url}`);
-      //     // const blob = await response.blob();
-      //     // imgFolder.file(`image-${index + 1}.jpg`, blob);
-
-          
-
-      //   })
-      // );
-      // const zipBlob = await zip.generateAsync({ type: "blob" });
-      // const zipUrl = URL.createObjectURL(zipBlob);
-      // const a = document.createElement("a");
-      // a.href = zipUrl;
-      // a.download = `event-${eventName}-images.zip`;
-      // document.body.appendChild(a);
-      // a.click();
-      // document.body.removeChild(a);
-      // URL.revokeObjectURL(zipUrl);
+      navigate("/showImages", { state: { imageUrls: image_urls } });
     } catch (err) {
       console.error(err);
-      setDownloadError(err.message);
+      setDownloadError((prev) => ({ ...prev, [eventName]: "NO IMAGES FOUND" }));
     } finally {
-      setDownloadLoading(false);
+      setDownloadLoading(null);
     }
   };
-
-const goToImagesPage = (imageUrls) => {
-    navigate("/showImages", { state: { imageUrls } });
-};
-
 
   return (
     <div className="min-h-screen bg-black text-white pt-24 px-4 pb-8">
@@ -175,6 +90,16 @@ const goToImagesPage = (imageUrls) => {
         >
           EVENTS
         </motion.h1>
+        <div className="bg-gray-900 text-white p-6 rounded-lg border border-gray-700 shadow-lg">
+          <h2 className="text-2xl font-bold text-blue-400 mb-2">Instructions for Uploading Profile Photo</h2>
+          <ul className="list-disc list-inside text-gray-300 space-y-1">
+            <li>The Profile Photo Should Contain A Clear Photo Of Your Face.</li>
+            <li>Front Profile Only.</li>
+            <li>The Image Should Be a Solo Photo Of You.</li>
+            <li>The dimensions of the Image Shouldnt Be Too Small. It Wont Be Accepted </li>
+            <li>If you face any issues, check your internet connection and retry.</li>
+          </ul>
+        </div>
 
         <div className="relative">
           <input
@@ -199,7 +124,6 @@ const goToImagesPage = (imageUrls) => {
               <div key={event.id} className="bg-gray-800 rounded-lg border border-gray-700 p-4">
                 <h3 className="text-xl font-semibold text-gray-100">{event.name}</h3>
                 <p className="mt-2 text-gray-300 line-clamp-2">{event.description}</p>
-
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center text-gray-400">
                     <CalendarDays className="w-4 h-4 mr-2" />
@@ -214,35 +138,29 @@ const goToImagesPage = (imageUrls) => {
                     <span>{event.organized_by}</span>
                   </div>
                 </div>
-                {!downloadLoading && 
                 <button
                   onClick={() => handleDownloadImages(event.name)}
-                  disabled={downloadLoading}
-                  className="w-full bg-blue-600 text-white py-2 px-4 mt-4 rounded-md hover:bg-blue-700 transition-colors duration-200 focus:outline-none"
+                  disabled={downloadLoading === event.name}
+                  className={`w-full py-2 px-4 mt-4 rounded-md transition-colors duration-200 focus:outline-none ${downloadLoading === event.name ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"}`}
                 >
-                  {downloadLoading ? "Fetching Images..." : "Get Images"}
+                  {downloadLoading === event.name ? "Fetching Images..." : "Get Images"}
                   <Download className="w-5 h-5 ml-2 inline" />
-                </button>}
+                </button>
+                {downloadError[event.name] && (
+                  <p className="mt-2 text-red-500">{downloadError[event.name]}</p>
+                )}
               </div>
             ))}
-
           </div>
-          
         )}
       </div>
-        {/* <div className="w-1000" id="imageContainer"></div> */}
-        {/* {console.log(image_urls)} */}
-        {/* <button
-        onClick={() => goToImagesPage(image_urls)}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-      >
-        View Images
-      </button> */}
     </div>
   );
 };
 
 export default EventsPage;
+
+
 
 
 

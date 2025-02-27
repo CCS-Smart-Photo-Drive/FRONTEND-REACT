@@ -54,9 +54,14 @@ const FuturisticHome = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="flex items-center space-x-3">
           <img src="/logo.png" alt="SmartPhotoDrive" className="w-12 h-12" />
-          <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+          <a 
+            href="https://smartdrive.ccstiet.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
+          >
             SmartPhotoDrive
-          </span>
+          </a>
         </motion.div>
         <div className="flex space-x-4">
           <motion.a whileHover={{ scale: 1.1 }} href={`/about-us`} className="text-gray-300 hover:text-white transition duration-200 font-medium">

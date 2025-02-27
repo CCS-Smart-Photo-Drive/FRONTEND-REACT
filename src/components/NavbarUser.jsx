@@ -35,9 +35,14 @@ export const NavbarUser = ({ onLogout }) => {
               alt="Creating Computing Society Logo"
               className="w-20 h-20" // Adjust size as needed
             />
-            <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500">
+            <a 
+              href="https://smartdrive.ccstiet.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
+            >
               SmartPhotoDrive
-            </span>
+            </a>
           </div>
 
           {/* Navigation Links */}

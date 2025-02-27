@@ -30,7 +30,14 @@ export const NavbarAdmin = ({ onLogout }) => {
           <div className="flex items-center justify-between h-16">
             {/* Logo/Brand */}
             <div className="flex-shrink-0">
-              <span className="text-xl font-bold text-white">SmartPhotoDrive</span>
+            <a 
+              href="https://smartdrive.ccstiet.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
+            >
+              SmartPhotoDrive
+            </a>
             </div>
             <div className="flex items-center space-x-6">
 {/* Navigation Links */}
