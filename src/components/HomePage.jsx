@@ -83,9 +83,9 @@ const FuturisticHome = () => {
         href="https://smartdrive.ccstiet.com" 
         target="_blank" 
         rel="noopener noreferrer"
-        className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
+        className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline flex items-center gap-2"
       >
-        SmartPhotoDrive
+        SmartPhotoDrive <span className="text-sm font-medium text-gray-300">(Beta)</span>
       </a>
     </motion.div>
     
@@ -115,6 +115,9 @@ const FuturisticHome = () => {
         </motion.h1>
         <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
           AI-Based, Smart Photo Drive. For Retrieving Personalized Memories.
+        </p>
+        <p className="text-xl text-gray-300 mt-4 max-w-2xl mx-auto">
+          This is a beta version, and while we've optimized it for the best results, there may be occasional inaccuracies. Factors like internet speed and other technical limitations can affect performance.
         </p>
         {/* <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="mt-8 px-12 py-4 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-lg text-lg font-medium shadow-lg hover:shadow-xl transition duration-300">
           Get Started

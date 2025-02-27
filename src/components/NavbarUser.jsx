@@ -39,9 +39,9 @@ export const NavbarUser = ({ onLogout }) => {
               href="https://smartdrive.ccstiet.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
+              className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline flex items-center gap-2"
             >
-              SmartPhotoDrive
+              SmartPhotoDrive <span className="text-sm font-medium text-gray-300">(Beta)</span>
             </a>
           </div>
 
