@@ -80,7 +80,7 @@ const App = () => {
         {/* Public routes */}
         <Route path="/" element={<SmartPhotoDriveHome />} />
         <Route
-          path="/about-us"
+          path="/about"
           element={<About_Page />}
         />
         {/* <Route

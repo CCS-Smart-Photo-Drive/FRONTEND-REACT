@@ -31,9 +31,8 @@ export const NavbarAdmin = ({ onLogout }) => {
             {/* Logo/Brand */}
             <div className="flex-shrink-0">
             <a 
-              href="https://smartdrive.ccstiet.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
+              href="/" 
+              // rel="noopener noreferrer"
               className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 hover:underline"
             >
               SmartPhotoDrive
