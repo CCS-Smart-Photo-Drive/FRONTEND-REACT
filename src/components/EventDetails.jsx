@@ -4,52 +4,56 @@ import NavbarUser from "./NavbarUser";
 import { motion } from "framer-motion";
 import { API_URL } from "../config";
 import JSZip from "jszip";
+import { useNavigate } from "react-router-dom";
+
 
 function formatForFrontEnd(data) {
   /*
-    {
-      "_id": "6799e8e57be6aff4f018302b",
-      "date": "12",
-      "description": "yoyo",
-      "event_manager_name": "hari22",
-      "event_name": "yoyo1234",
-      "location": "Thapar",
-      "organized_by": "hehe",
+  {
+    "_id": "6799e8e57be6aff4f018302b",
+    "date": "12",
+    "description": "yoyo",
+    "event_manager_name": "hari22",
+    "event_name": "yoyo1234",
+    "location": "Thapar",
+    "organized_by": "hehe",
     }
-
+    
     to
-
+    
     {
       "id": 1,
       "name": "Tech Conference 2024",
       "description": "Join us for the biggest tech conference of the year featuring leading experts in AI, Web Development, and Cloud Computing.",
       "date": "2024-03-15T09:00:00Z",
       "location": "San Francisco Convention Center",
+      }
+      ];
+      */
+     return data.map((event) => ({
+       id: event._id,
+       name: event.event_name,
+       description: event.description,
+       date: event.date,
+       location: event.location,
+       organized_by: event.organized_by,
+      }));
     }
-  ];
-  */
-  return data.map((event) => ({
-    id: event._id,
-    name: event.event_name,
-    description: event.description,
-    date: event.date,
-    location: event.location,
-    organized_by: event.organized_by,
-  }));
-}
-
-const EventsPage = () => {
-  if (localStorage.getItem("token") === null) {
-    return <Navigate to="/login" replace />;
-  }
-
-  const [events, setEvents] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [downloadLoading, setDownloadLoading] = useState(false);
-  const [downloadError, setDownloadError] = useState("");
-
+    
+    const EventsPage = () => {
+      if (localStorage.getItem("token") === null) {
+        return <Navigate to="/login" replace />;
+      }
+      
+      const [events, setEvents] = useState([]);
+      const [searchQuery, setSearchQuery] = useState("");
+      const [loading, setLoading] = useState(true);
+      const [selectedEvent, setSelectedEvent] = useState(null);
+      const [downloadLoading, setDownloadLoading] = useState(false);
+      const [downloadError, setDownloadError] = useState("");
+      const [image_urls , setImage_urls] = useState("")
+      
+      const navigate = useNavigate();
   // useEffect(() => {
   //   setLoading(true);
   //   fetch(`${API_URL(window.location.href)}/all_events`)
@@ -101,30 +105,50 @@ const EventsPage = () => {
       }
 
       const { image_urls } = await fetchImagesResponse.json();
+      setImage_urls(image_urls);
+      console.log(image_urls)
       if (!image_urls.length) throw new Error("No images found for this event.");
 
       // Download images and zip them
       const zip = new JSZip();
       const imgFolder = zip.folder(eventName);
 
-      await Promise.all(
-        image_urls.map(async (url, index) => {
-          const response = await fetch(url, {mode: "no-cors"});
-          if (!response.ok) throw new Error(`Failed to download image: ${url}`);
-          const blob = await response.blob();
-          imgFolder.file(`image-${index + 1}.jpg`, blob);
-        })
-      );
+      const container = document.getElementById("imageContainer"); // Make sure you have a div with this ID in your HTML
 
-      const zipBlob = await zip.generateAsync({ type: "blob" });
-      const zipUrl = URL.createObjectURL(zipBlob);
-      const a = document.createElement("a");
-      a.href = zipUrl;
-      a.download = `event-${eventName}-images.zip`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(zipUrl);
+// Promise.all(
+//   image_urls.map(async (url) => {
+//     const img = document.createElement("img"); // Create an image element
+//     img.src = url; // Set image source
+//     img.alt = "Loaded Image";
+//     img.style.width = "1000px"; // Set size if needed
+//     img.style.margin = "10px";
+//     container.appendChild(img); // Append image to the container
+//   })
+// );
+
+
+      // await Promise.all(
+      //   image_urls.map(async (url, index) => {
+      //     // const response = await fetch(url , {mode:"no-cors"});
+
+      //     // console.log(response)
+      //     // if (!response.ok) throw new Error(`Failed to download image: ${url}`);
+      //     // const blob = await response.blob();
+      //     // imgFolder.file(`image-${index + 1}.jpg`, blob);
+
+          
+
+      //   })
+      // );
+      // const zipBlob = await zip.generateAsync({ type: "blob" });
+      // const zipUrl = URL.createObjectURL(zipBlob);
+      // const a = document.createElement("a");
+      // a.href = zipUrl;
+      // a.download = `event-${eventName}-images.zip`;
+      // document.body.appendChild(a);
+      // a.click();
+      // document.body.removeChild(a);
+      // URL.revokeObjectURL(zipUrl);
     } catch (err) {
       console.error(err);
       setDownloadError(err.message);
@@ -132,6 +156,11 @@ const EventsPage = () => {
       setDownloadLoading(false);
     }
   };
+
+  const goToImagesPage = (imageUrls) => {
+    navigate("/showImages", { state: { imageUrls } });
+};
+
 
   return (
     <div className="min-h-screen bg-black text-white pt-24 px-4 pb-8">
@@ -184,7 +213,7 @@ const EventsPage = () => {
                     <span>{event.organized_by}</span>
                   </div>
                 </div>
-
+                {!downloadLoading && 
                 <button
                   onClick={() => handleDownloadImages(event.name)}
                   disabled={downloadLoading}
@@ -192,12 +221,22 @@ const EventsPage = () => {
                 >
                   {downloadLoading ? "Fetching Images..." : "Get Images"}
                   <Download className="w-5 h-5 ml-2 inline" />
-                </button>
+                </button>}
               </div>
             ))}
+
           </div>
+          
         )}
       </div>
+        {/* <div className="w-1000" id="imageContainer"></div> */}
+        {/* {console.log(image_urls)} */}
+        <button
+        onClick={() => goToImagesPage(image_urls)}
+        className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+      >
+        View Images
+      </button>
     </div>
   );
 };

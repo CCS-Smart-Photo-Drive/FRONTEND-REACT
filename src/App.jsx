@@ -15,6 +15,7 @@ import { API_URL } from "./config";
 import { VerifyLogin } from "./components/VerifyLogin";
 import UserAuthPage from "./components/UserAuthPage";
 import AdminAuthPage from "./components/AdminAuthPage";
+import ShowImages from "./components/ShowImages";
 
 const PrivateRoute = ({ children }) => {
   const [render, setRender] = useState(<div>Loading...</div>);
@@ -100,6 +101,14 @@ const App = () => {
           element={
             <PrivateRoute>
             <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/showImages"
+          element={
+            <PrivateRoute>
+            <ShowImages />
             </PrivateRoute>
           }
         />
