@@ -68,8 +68,8 @@ function About_Page() {
           </motion.a>
         </div>
         <div className="flex space-x-4">
-          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleLogin()} className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
-            Login
+          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <a href={`https://auth.ccstiet.com/auth/google?clientid=${clientId}&callback=${window.location.href}verify_login`}>Login</a>
           </motion.button>
         </div>
       </div>
