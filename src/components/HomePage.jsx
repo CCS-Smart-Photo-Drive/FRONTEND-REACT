@@ -103,10 +103,13 @@ const FuturisticHome = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans overflow-hidden relative">
-      <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900 via-black to-black"></div>
+    <>
+
+      <div className="min-h-screen bg-black text-white font-sans overflow-hidden relative z-20">
+    {/* <div className="absolute inset-0 opacity-50 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900 via-black to-black z-10"></div> */}
+
       {navbar}
-      <header className="relative pt-40 pb-24 text-center z-10">
+      <header className="relative pt-40 pb-24 text-center">
         <motion.h1 initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }} className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600">
           Snap. Sort. Share.
         </motion.h1>
@@ -145,7 +148,7 @@ const FuturisticHome = () => {
       <section id="society-showcase" className="py-16 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-center">
         <div className="max-w-6xl mx-auto px-6">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-4xl font-bold text-white mb-12">
-            Meet Our Computing Society
+            Meet Our Community
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <motion.div whileHover={{ scale: 1.05 }} className="group relative overflow-hidden rounded-lg shadow-lg">
@@ -180,6 +183,8 @@ const FuturisticHome = () => {
         <p>&copy; Made With ♥️ Team CCS</p>
       </footer>
     </div>
+    </>
+  
   );
 };
 
