@@ -47,7 +47,7 @@ export const NavbarUser = ({ onLogout }) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <motion.a whileHover={{ scale: 1.1 }} href="/about-us" className="text-gray-300 hover:text-white transition duration-200 font-medium">
+            <motion.a whileHover={{ scale: 1.1 }} href="/about" className="text-gray-300 hover:text-white transition duration-200 font-medium">
               About Us
             </motion.a>
             <button
